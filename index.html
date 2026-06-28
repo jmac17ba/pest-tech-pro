@@ -391,6 +391,85 @@ body.dark-mode .fl-unit.done{background:rgba(20,60,40,0.6)}
 .fl-summary{grid-template-columns:repeat(3,1fr)}
 }
 
+/* GLASS THEME — iOS-style frosted glass */
+body.glass::before{content:'';position:fixed;inset:0;z-index:-2;background:
+  radial-gradient(circle at 15% 12%, rgba(110,210,170,0.55), transparent 55%),
+  radial-gradient(circle at 85% 8%, rgba(120,180,255,0.50), transparent 55%),
+  radial-gradient(circle at 50% 100%, rgba(255,180,140,0.45), transparent 60%),
+  linear-gradient(160deg,#eef3f8,#e7edf6)}
+body.glass .bg-overlay{background:transparent!important}
+body.glass .card,
+body.glass .stat-card,
+body.glass .settings-panel{
+  background:rgba(255,255,255,0.16)!important;
+  backdrop-filter:blur(22px) saturate(170%);
+  -webkit-backdrop-filter:blur(22px) saturate(170%);
+  border:1px solid rgba(255,255,255,0.40);
+  box-shadow:0 8px 32px rgba(31,38,135,0.15)}
+body.glass .header{
+  background:rgba(28,44,38,0.34)!important;
+  backdrop-filter:blur(22px) saturate(170%);
+  -webkit-backdrop-filter:blur(22px) saturate(170%);
+  border:1px solid rgba(255,255,255,0.25)}
+body.glass .card-header{background:linear-gradient(90deg,rgba(255,255,255,0.18),transparent)}
+body.glass .task-item,
+body.glass .fl-unit,
+body.glass .fl-stat,
+body.glass .fl-routine-card,
+body.glass .sched-item,
+body.glass .day-task,
+body.glass .day-hour,
+body.glass .inventory-item,
+body.glass .inventory-location,
+body.glass .fly-light-card,
+body.glass .tool-item,
+body.glass .voice-note-item,
+body.glass .cal-cell,
+body.glass .export-card,
+body.glass .message-box,
+body.glass .tabs,
+body.glass .upload-area,
+body.glass .custom-wallpaper-area,
+body.glass .input-field,
+body.glass select.input-field,
+body.glass .day-time-input,
+body.glass .cal-day-detail,
+body.glass .theme-swatch{
+  background:rgba(255,255,255,0.22)!important;
+  border:1px solid rgba(255,255,255,0.38)}
+body.glass .tab.active{background:rgba(255,255,255,0.55)!important}
+body.glass .cal-cell.has-tasks{background:rgba(255,255,255,0.34)!important}
+body.glass .cal-cell.selected,
+body.glass .task-checkbox.checked{background:var(--primary)!important}
+body.glass.dark-mode::before{background:
+  radial-gradient(circle at 15% 12%, rgba(20,90,70,0.6), transparent 55%),
+  radial-gradient(circle at 85% 8%, rgba(25,55,120,0.6), transparent 55%),
+  linear-gradient(160deg,#0f131c,#161a26)}
+body.glass.dark-mode .card,
+body.glass.dark-mode .stat-card,
+body.glass.dark-mode .settings-panel{background:rgba(45,55,85,0.30)!important;border-color:rgba(255,255,255,0.14)}
+body.glass.dark-mode .task-item,
+body.glass.dark-mode .fl-unit,
+body.glass.dark-mode .fl-stat,
+body.glass.dark-mode .fl-routine-card,
+body.glass.dark-mode .sched-item,
+body.glass.dark-mode .day-task,
+body.glass.dark-mode .day-hour,
+body.glass.dark-mode .inventory-item,
+body.glass.dark-mode .inventory-location,
+body.glass.dark-mode .fly-light-card,
+body.glass.dark-mode .tool-item,
+body.glass.dark-mode .voice-note-item,
+body.glass.dark-mode .cal-cell,
+body.glass.dark-mode .export-card,
+body.glass.dark-mode .message-box,
+body.glass.dark-mode .tabs,
+body.glass.dark-mode .upload-area,
+body.glass.dark-mode .input-field,
+body.glass.dark-mode select.input-field,
+body.glass.dark-mode .cal-day-detail,
+body.glass.dark-mode .theme-swatch{background:rgba(255,255,255,0.08)!important;border-color:rgba(255,255,255,0.14)}
+
 .hidden{display:none!important}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .animate-in{animation:fadeIn 0.3s ease-out}
@@ -419,6 +498,10 @@ body.dark-mode .fl-unit.done{background:rgba(20,60,40,0.6)}
 </div>
 <div class="settings-body">
 <div class="settings-section">
+<div class="settings-section-title">🔄 Sync Across Devices</div>
+<div id="syncBox"></div>
+</div>
+<div class="settings-section">
 <div class="settings-section-title">🎨 Theme</div>
 <div class="theme-grid" id="themeGrid"></div>
 </div>
@@ -445,6 +528,10 @@ body.dark-mode .fl-unit.done{background:rgba(20,60,40,0.6)}
 <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg);border-radius:8px;">
 <span>Dark Mode</span>
 <button class="btn btn-sm btn-secondary" onclick="toggleTheme();renderSettings();" id="darkModeBtn">🌙 Dark</button>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg);border-radius:8px;">
+<span>🧊 Glass effect (iOS style)</span>
+<button class="btn btn-sm btn-secondary" onclick="toggleGlass()" id="glassBtn">Off</button>
 </div>
 <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg);border-radius:8px;">
 <span>Background Opacity</span>
@@ -757,6 +844,18 @@ var THEMES = {
 };
 var currentTheme = 'green';
 
+// ==================== CLOUD SYNC CONFIG ====================
+// Filled in after the Supabase project is created (anon key is safe to expose).
+var SUPABASE_URL = '';
+var SUPABASE_ANON_KEY = '';
+var syncCode = null;
+var syncEnabled = false;
+var applyingRemote = false;
+var lastSyncStamp = null;
+var syncStatusMsg = '';
+var pushTimer = null;
+var pullInterval = null;
+
 function applyTheme(key) {
     var t = THEMES[key]; if(!t) return;
     currentTheme = key;
@@ -822,6 +921,7 @@ document.addEventListener('DOMContentLoaded', function() {
     scheduleReminders();
     updateStats();
     setupDragDrop();
+    if(syncEnabled) { startSyncPolling(); pullSync(); }
 });
 
 function updateDate() {
@@ -842,6 +942,7 @@ function closeSettings(e) {
 }
 
 function renderSettings() {
+    renderSyncSettings();
     var tg = document.getElementById('themeGrid');
     if(tg) {
         var th = '';
@@ -875,6 +976,8 @@ function renderSettings() {
     } else {
         dmBtn.textContent = '🌙 Dark';
     }
+    var gBtn = document.getElementById('glassBtn');
+    if(gBtn) gBtn.textContent = document.body.classList.contains('glass') ? 'On' : 'Off';
 
     document.getElementById('opacitySlider').value = currentOpacity;
 }
@@ -949,6 +1052,14 @@ function toggleTheme() {
         updateOpacity(currentOpacity);
     }
     saveToStorage();
+}
+
+function toggleGlass() {
+    document.body.classList.toggle('glass');
+    var on = document.body.classList.contains('glass');
+    try { localStorage.setItem('pestTechGlass', on); } catch(e) {}
+    renderSettings();
+    showToast(on ? '🧊 Glass theme on' : 'Glass theme off');
 }
 
 // ==================== SECTIONS ====================
@@ -2379,6 +2490,129 @@ function renderAll() {
     updateStats();
 }
 
+// ==================== CLOUD SYNC ====================
+function syncConfigured() { return !!(SUPABASE_URL && SUPABASE_ANON_KEY); }
+
+function getSyncData() {
+    // structured data only — strip heavy base64 (task photos kept local per device)
+    return {
+        tasks: tasks.map(function(t) { return {id:t.id, text:t.text, completed:t.completed, type:t.type, timer:t.timer, created:t.created, schedKey:t.schedKey}; }),
+        schedule: schedule,
+        flyLights: flyLights,
+        inventory: inventory,
+        tools: tools
+    };
+}
+
+function applySyncData(d) {
+    if(!d) return;
+    if(d.tasks) {
+        var photoById = {};
+        tasks.forEach(function(t) { photoById[t.id] = t.photos || []; });
+        tasks = d.tasks.map(function(t) { t.photos = photoById[t.id] || []; return t; });
+    }
+    if(d.schedule) schedule = d.schedule;
+    if(d.flyLights) flyLights = d.flyLights;
+    if(d.inventory) inventory = d.inventory;
+    if(d.tools) tools = d.tools;
+}
+
+function setSyncStatus(m) {
+    syncStatusMsg = m;
+    var el = document.getElementById('syncStatus');
+    if(el) el.textContent = m;
+}
+
+function syncHeaders() {
+    return {'apikey':SUPABASE_ANON_KEY, 'Authorization':'Bearer ' + SUPABASE_ANON_KEY, 'Content-Type':'application/json'};
+}
+
+function pushSync() {
+    if(!syncEnabled || !syncConfigured()) return;
+    var stamp = new Date().toISOString();
+    fetch(SUPABASE_URL + '/rest/v1/app_state', {
+        method:'POST',
+        headers: Object.assign(syncHeaders(), {'Prefer':'resolution=merge-duplicates'}),
+        body: JSON.stringify({code:syncCode, data:getSyncData(), updated_at:stamp})
+    }).then(function(r) {
+        if(r.ok) { lastSyncStamp = stamp; setSyncStatus('✓ Synced ' + new Date().toLocaleTimeString()); }
+        else { setSyncStatus('Sync error ' + r.status); }
+    }).catch(function() { setSyncStatus('Offline — will retry'); });
+}
+
+function pullSync() {
+    if(!syncEnabled || !syncConfigured()) return;
+    fetch(SUPABASE_URL + '/rest/v1/app_state?code=eq.' + encodeURIComponent(syncCode) + '&select=data,updated_at', {headers: syncHeaders()})
+    .then(function(r) { return r.json(); })
+    .then(function(rows) {
+        if(!rows || !rows.length) { pushSync(); return; }
+        var row = rows[0];
+        if(lastSyncStamp && row.updated_at <= lastSyncStamp) return;
+        applyingRemote = true;
+        applySyncData(row.data || {});
+        saveToStorage();
+        renderAll();
+        renderCalendar();
+        renderSettings();
+        applyingRemote = false;
+        lastSyncStamp = row.updated_at;
+        setSyncStatus('✓ Updated from cloud ' + new Date().toLocaleTimeString());
+    }).catch(function() { /* offline, ignore */ });
+}
+
+function scheduleDebouncedPush() {
+    clearTimeout(pushTimer);
+    pushTimer = setTimeout(pushSync, 2500);
+}
+
+function startSyncPolling() {
+    clearInterval(pullInterval);
+    pullInterval = setInterval(pullSync, 20000);
+}
+
+function genSyncCode() {
+    var chars = 'abcdefghjkmnpqrstuvwxyz23456789';
+    var c = 'pest-';
+    for(var i = 0; i < 8; i++) c += chars[Math.floor(Math.random() * chars.length)];
+    var el = document.getElementById('syncCodeInput');
+    if(el) el.value = c;
+}
+
+function connectSync() {
+    if(!syncConfigured()) { showToast('Sync not set up in this version'); return; }
+    var code = (document.getElementById('syncCodeInput').value || '').trim();
+    if(!code) { showToast('Enter or generate a sync code'); return; }
+    syncCode = code; syncEnabled = true; lastSyncStamp = null;
+    try { localStorage.setItem('pestTechSyncCode', code); } catch(e) {}
+    setSyncStatus('Connecting...');
+    pullSync();
+    startSyncPolling();
+    renderSyncSettings();
+    showToast('🔄 Sync connected');
+}
+
+function disconnectSync() {
+    syncEnabled = false;
+    clearInterval(pullInterval);
+    try { localStorage.removeItem('pestTechSyncCode'); } catch(e) {}
+    renderSyncSettings();
+    showToast('Sync disconnected');
+}
+
+function renderSyncSettings() {
+    var box = document.getElementById('syncBox');
+    if(!box) return;
+    if(!syncConfigured()) {
+        box.innerHTML = '<div style="font-size:0.88rem;color:var(--text-muted);">Cloud sync isn\'t set up in this version yet.</div>';
+        return;
+    }
+    if(syncEnabled) {
+        box.innerHTML = '<div style="padding:10px;background:var(--bg);border-radius:8px;margin-bottom:10px;"><b>✓ Connected</b><div style="font-size:0.82rem;color:var(--text-muted);margin-top:2px;">Code: ' + escapeHtml(syncCode) + '</div><div id="syncStatus" style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;">' + escapeHtml(syncStatusMsg) + '</div></div><div style="display:flex;gap:8px;"><button class="btn btn-sm btn-secondary" onclick="pullSync();pushSync();">🔄 Sync now</button><button class="btn btn-sm btn-danger" onclick="disconnectSync()">Disconnect</button></div>';
+    } else {
+        box.innerHTML = '<div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:8px;">Enter the <b>same code</b> on your phone and computer to link them.</div><div class="input-group" style="flex-wrap:wrap;"><input type="text" class="input-field" id="syncCodeInput" placeholder="Your sync code"><button class="btn btn-secondary" onclick="genSyncCode()" title="Generate">🎲</button><button class="btn btn-primary" onclick="connectSync()">Connect</button></div>';
+    }
+}
+
 // ==================== STORAGE ====================
 function saveToStorage() {
     try {
@@ -2393,6 +2627,7 @@ function saveToStorage() {
         localStorage.setItem('pestTechWallpaper', currentWallpaper || '');
         localStorage.setItem('pestTechOpacity', currentOpacity);
         localStorage.setItem('pestTechDarkMode', document.body.classList.contains('dark-mode'));
+        if(syncEnabled && !applyingRemote) scheduleDebouncedPush();
     } catch(e) { console.warn('Storage save failed:', e); }
 }
 
@@ -2410,6 +2645,8 @@ function loadFromStorage() {
         var dm = localStorage.getItem('pestTechDarkMode');
         var thm = localStorage.getItem('pestTechTheme');
         if(thm && THEMES[thm]) applyTheme(thm);
+        var sc = localStorage.getItem('pestTechSyncCode');
+        if(sc && syncConfigured()) { syncCode = sc; syncEnabled = true; }
         if(t) tasks = JSON.parse(t);
         if(s) schedule = JSON.parse(s);
         // migrate old CSV-shaped schedule (date/client/location/service) to day/task
@@ -2449,6 +2686,9 @@ function loadFromStorage() {
         }
         if(dm === 'true') {
             document.body.classList.add('dark-mode');
+        }
+        if(localStorage.getItem('pestTechGlass') === 'true') {
+            document.body.classList.add('glass');
         }
     } catch(e) {
         console.warn('Storage load failed:', e);
