@@ -1,0 +1,2476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Pest Tech Pro</title>
+<style>
+:root {
+--primary: #2d6a4f;
+--primary-light: #40916c;
+--primary-dark: #1b4332;
+--accent: #d8f3dc;
+--warning: #f4a261;
+--danger: #e76f51;
+--bg: #f8f9fa;
+--card: #ffffff;
+--text: #212529;
+--text-muted: #6c757d;
+--border: #dee2e6;
+--shadow: 0 2px 8px rgba(0,0,0,0.08);
+--shadow-hover: 0 4px 16px rgba(0,0,0,0.12);
+--radius: 16px;
+--radius-sm: 10px;
+--bg-overlay: rgba(255,255,255,0.85);
+--card-bg: rgba(255,255,255,0.95);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+html,body{min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:var(--text);line-height:1.5;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+
+body{background-attachment:fixed;background-size:cover;background-position:center;background-repeat:no-repeat;transition:background-image 0.5s ease}
+
+body.dark-mode{--bg:#1a1a2e;--card:#16213e;--text:#eaeaea;--text-muted:#a0a0a0;--border:#2a2a4a;--accent:#0f3460;--shadow:0 2px 8px rgba(0,0,0,0.3);--shadow-hover:0 4px 16px rgba(0,0,0,0.4);--bg-overlay:rgba(26,26,46,0.85);--card-bg:rgba(22,33,62,0.95)}
+
+body.dark-mode .card-header{background:linear-gradient(90deg,rgba(15,52,96,0.9),transparent)}
+body.dark-mode .stat-card{background:var(--card-bg)}
+body.dark-mode .task-item{background:rgba(26,26,62,0.9)}
+body.dark-mode .task-item:hover{background:rgba(34,34,80,0.95)}
+body.dark-mode .input-field{background:rgba(26,26,62,0.9);color:#eaeaea;border-color:#2a2a4a}
+body.dark-mode .message-box{background:rgba(15,52,96,0.95);color:#eaeaea}
+body.dark-mode .schedule-table th{background:rgba(15,52,96,0.9)}
+body.dark-mode .upload-area{background:rgba(26,26,62,0.9)}
+body.dark-mode .add-photo-btn{background:rgba(26,26,62,0.9)}
+body.dark-mode .tab.active{background:var(--card-bg);color:#eaeaea}
+body.dark-mode .tabs{background:rgba(26,26,62,0.9)}
+body.dark-mode .camera-btn{background:var(--card-bg);color:#eaeaea}
+body.dark-mode .inventory-location{background:rgba(26,26,62,0.9)}
+body.dark-mode .fly-light-card{background:rgba(26,26,62,0.9)}
+body.dark-mode .export-card{background:rgba(26,26,62,0.9)}
+body.dark-mode .voice-note-item{background:rgba(26,26,62,0.9)}
+body.dark-mode .stat-value{color:#e94560}
+body.dark-mode .card-title{color:#e94560}
+body.dark-mode .tool-item{background:rgba(26,26,62,0.9)}
+body.dark-mode .settings-panel{background:rgba(22,33,62,0.98)}
+body.dark-mode .wallpaper-thumb{border-color:#2a2a4a}
+body.dark-mode .wallpaper-thumb:hover{border-color:#e94560}
+
+/* CRITICAL: cursor pointer on EVERYTHING for iOS Safari */
+*{cursor:default}
+button,.btn,.tab,.task-item,.task-checkbox,.delete-btn,.add-photo-btn,.camera-btn,.qty-btn,.timer-btn,.photo-gallery-item,.photo-delete,.voice-note-play,.voice-note-delete,.export-card,.stat-card,.fly-light-card,.settings-btn,.theme-toggle,.wallpaper-thumb,.color-swatch,.settings-close,.photo-modal-close,.photo-modal-nav,.custom-wallpaper-area,.upload-area,.fly-light-actions .btn,.inventory-item,.tool-item,.fly-light-header,.inventory-location-header,.card-header .btn,.input-group .btn,.message-actions .btn,.header-actions .btn,.tabs .tab,.task-photos label,.task-photos img,.task-photo-thumb,.task-photo-del,.photo-gallery-item img,.fly-light-actions input[type="file"],label.camera-btn,label.add-photo-btn,.fly-light-actions label,.task-photos input[type="file"],.settings-overlay,.settings-panel,.settings-section-title,.settings-header,.settings-body,.wallpaper-grid,.color-picker-grid,.export-options,.fly-light-grid,.photo-gallery,.photo-modal,.photo-modal-info,.photo-modal-nav,.photo-modal-close,.photo-modal img,.toast,.empty-state,.empty-state-icon,.badge,.badge-routine,.badge-special,.badge-urgent,.badge-low,.badge-medium,.badge-high,.schedule-table,.schedule-table th,.schedule-table td,.schedule-table tr,.message-box,.message-actions,.input-field,.input-group,.timer-display,.timer-active,.recording-indicator,.recording-dot,.voice-note-info,.voice-note-duration,.voice-note-date,.tool-info,.tool-name,.tool-use,.tool-value,.fly-light-name,.fly-light-status,.fly-light-detail,.fly-light-actions,.inventory-location,.inventory-location-title,.inventory-item-name,.inventory-item-qty,.qty-value,.fly-light-card,.fly-light-card.needs-service,.fly-light-header,.fly-light-detail,.fly-light-actions,.fly-light-status.good,.fly-light-status.needs-tube,.fly-light-status.needs-clean,.export-icon,.export-title,.export-desc,.settings-section,.settings-section-title,.custom-wallpaper-area,.custom-wallpaper-area:hover,.custom-wallpaper-area.dragover,.wallpaper-label,.color-swatch,.color-swatch.active,.color-swatch:hover,.wallpaper-thumb.active,.wallpaper-thumb.active::after,.settings-overlay.active,.settings-panel,.settings-header,.settings-title,.settings-close,.settings-body,.settings-section,.settings-section-title,.bg-overlay,.app-container,.header,.header h1,.header-icon,.date-display,.header-actions,.theme-toggle,.settings-btn,.stats-bar,.stat-card,.stat-label,.stat-value,.main-grid,.card,.card-header,.card-title,.card-body,.task-list,.task-item,.task-checkbox,.task-checkbox.checked,.task-checkbox.checked::after,.task-text,.task-meta,.task-item.special,.task-item.routine,.delete-btn,.task-photos,.task-photo-thumb,.add-photo-btn,.timer-display,.timer-active,.timer-btn,.input-group,.input-field,.input-field:focus,select.input-field,.btn,.btn:active,.btn-primary,.btn-primary:hover,.btn-secondary,.btn-secondary:hover,.btn-warning,.btn-warning:hover,.btn-danger,.btn-danger:hover,.btn-sm,.btn-ghost,.btn-ghost:hover,.upload-area,.upload-area:hover,.upload-area.dragover,.upload-icon,.upload-text,.upload-hint,.schedule-table,.schedule-table th,.schedule-table td,.schedule-table tr:hover,.badge,.badge-routine,.badge-special,.badge-urgent,.badge-low,.badge-medium,.badge-high,.message-box,.message-actions,.tabs,.tab,.tab.active,.toast,.toast.show,.empty-state,.empty-state-icon,.photo-modal,.photo-modal.active,.photo-modal img,.photo-modal-close,.photo-modal-nav,.photo-modal-nav:hover,.photo-modal-prev,.photo-modal-next,.photo-modal-info,.photo-gallery,.photo-gallery-item,.photo-gallery-item img,.photo-gallery-item:hover img,.photo-gallery-item .photo-delete,.photo-gallery-item:hover .photo-delete,.camera-btn-group,.camera-btn,.camera-btn:hover,.camera-btn:active,.inventory-location,.inventory-location-header,.inventory-location-title,.inventory-item,.inventory-item-name,.inventory-item-qty,.qty-btn,.qty-btn:hover,.qty-btn.minus,.qty-btn.minus:hover,.qty-value,.inventory-add-form,.inventory-add-form .input-field,.fly-light-grid,.fly-light-card,.fly-light-card:hover,.fly-light-card.needs-service,.fly-light-header,.fly-light-name,.fly-light-status,.fly-light-status.good,.fly-light-status.needs-tube,.fly-light-status.needs-clean,.fly-light-detail,.fly-light-detail:last-child,.fly-light-actions,.fly-light-actions .btn,.voice-note-item,.voice-note-play,.voice-note-info,.voice-note-date,.voice-note-duration,.voice-note-delete,.recording-indicator,.recording-indicator.active,.recording-dot,.export-options,.export-card,.export-card:hover,.export-icon,.export-title,.export-desc,.tool-item,.tool-info,.tool-name,.tool-use,.tool-value{cursor:pointer!important;-webkit-touch-callout:none!important;-webkit-user-select:none!important;user-select:none!important;touch-action:manipulation!important}
+
+/* WALLPAPER FIX: bg-overlay starts transparent, gets opacity when wallpaper active */
+.bg-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:-1;pointer-events:none;transition:background 0.4s ease}
+.bg-overlay.solid{background:var(--bg-overlay)}
+.bg-overlay.wallpaper-active{background:var(--bg-overlay)}
+body.has-wallpaper .bg-overlay{background:var(--bg-overlay)}
+body.has-wallpaper .app-container{background:transparent}
+
+.app-container{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:16px}
+
+.header{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:white;padding:20px 24px;border-radius:var(--radius);margin-bottom:20px;box-shadow:var(--shadow-hover);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;backdrop-filter:blur(10px)}
+.header h1{font-size:1.6rem;font-weight:700;display:flex;align-items:center;gap:10px}
+.header-icon{font-size:2rem}
+.date-display{background:rgba(255,255,255,0.15);padding:8px 18px;border-radius:50px;font-weight:500;font-size:1rem}
+.header-actions{display:flex;gap:8px;align-items:center}
+.theme-toggle{background:rgba(255,255,255,0.2);border:none;color:white;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.theme-toggle:hover{background:rgba(255,255,255,0.3);transform:scale(1.1)}
+.settings-btn{background:rgba(255,255,255,0.2);border:none;color:white;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.settings-btn:hover{background:rgba(255,255,255,0.3);transform:rotate(30deg)}
+
+.settings-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:4000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px)}
+.settings-overlay.active{display:flex}
+.settings-panel{background:rgba(255,255,255,0.98);border-radius:var(--radius);width:100%;max-width:600px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:slideUp 0.3s ease-out}
+@keyframes slideUp{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:translateY(0)}}
+.settings-header{padding:20px 24px;background:linear-gradient(90deg,var(--accent),transparent);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.settings-title{font-size:1.3rem;font-weight:700;color:var(--primary-dark)}
+.settings-close{background:none;border:none;font-size:1.8rem;cursor:pointer;color:var(--text-muted)}
+.settings-close:hover{color:var(--danger)}
+.settings-body{padding:20px 24px}
+.settings-section{margin-bottom:24px}
+.settings-section-title{font-size:1rem;font-weight:700;color:var(--primary-dark);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+
+.wallpaper-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.wallpaper-thumb{aspect-ratio:16/10;border-radius:10px;border:3px solid transparent;cursor:pointer;overflow:hidden;position:relative;transition:all 0.2s;background-size:cover;background-position:center}
+.wallpaper-thumb:hover{transform:scale(1.05);border-color:var(--primary)}
+.wallpaper-thumb.active{border-color:var(--primary);box-shadow:0 0 0 3px rgba(45,106,79,0.3)}
+.wallpaper-thumb.active::after{content:"✓";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--primary);color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1rem}
+.wallpaper-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);color:white;padding:6px 8px;font-size:0.75rem;text-align:center}
+
+.custom-wallpaper-area{border:2px dashed var(--primary-light);border-radius:var(--radius-sm);padding:30px;text-align:center;background:var(--accent);transition:all 0.2s;cursor:pointer;margin-top:12px}
+.custom-wallpaper-area:hover{border-color:var(--primary);background:#c7f0d2}
+.custom-wallpaper-area.dragover{border-color:var(--primary-dark);background:#b7e4c7}
+
+.theme-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.theme-swatch{border:2px solid transparent;border-radius:10px;overflow:hidden;cursor:pointer;display:flex;flex-wrap:wrap;background:var(--card);box-shadow:var(--shadow)}
+.theme-swatch span{height:26px;flex:1 1 25%}
+.theme-swatch .theme-name{flex:1 1 100%;text-align:center;font-size:0.8rem;font-weight:600;padding:6px;color:var(--text)}
+.theme-swatch.active{border-color:var(--primary);box-shadow:0 0 0 3px rgba(45,106,79,0.25)}
+.color-picker-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.color-swatch{aspect-ratio:1;border-radius:10px;border:3px solid transparent;cursor:pointer;transition:all 0.2s}
+.color-swatch:hover{transform:scale(1.1)}
+.color-swatch.active{border-color:var(--primary);box-shadow:0 0 0 3px rgba(45,106,79,0.3)}
+
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--card-bg);padding:16px;border-radius:var(--radius-sm);box-shadow:var(--shadow);border-left:4px solid var(--primary);transition:transform 0.2s,box-shadow 0.2s;cursor:pointer;backdrop-filter:blur(5px)}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+.stat-card.warning{border-left-color:var(--warning)}
+.stat-card.danger{border-left-color:var(--danger)}
+.stat-card.success{border-left-color:#10b981}
+.stat-label{font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+.stat-value{font-size:1.8rem;font-weight:700;color:var(--primary-dark)}
+.stat-card.warning .stat-value{color:var(--warning)}
+.stat-card.danger .stat-value{color:var(--danger)}
+.stat-card.success .stat-value{color:#10b981}
+
+.main-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.main-grid{grid-template-columns:1fr}.stats-bar{grid-template-columns:repeat(2,1fr)}.header h1{font-size:1.3rem}.wallpaper-grid{grid-template-columns:repeat(2,1fr)}}
+
+.card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:box-shadow 0.3s;margin-bottom:20px;backdrop-filter:blur(5px)}
+.card:hover{box-shadow:var(--shadow-hover)}
+.card-header{padding:16px 20px;background:linear-gradient(90deg,var(--accent),transparent);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.card-title{font-size:1.1rem;font-weight:700;color:var(--primary-dark);display:flex;align-items:center;gap:8px}
+.card-body{padding:16px 20px}
+
+.task-list{max-height:380px;overflow-y:auto;padding-right:4px}
+.task-item{display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px;margin-bottom:8px;background:var(--bg);border-radius:var(--radius-sm);border:2px solid transparent;transition:all 0.2s;cursor:pointer;position:relative}
+.task-item:hover{border-color:var(--primary-light);background:white}
+.task-row{display:flex;align-items:flex-start;gap:12px;width:100%}
+.task-item.completed{opacity:0.55;background:#e8f5e9}
+.task-item.completed .task-text{text-decoration:line-through;color:var(--text-muted)}
+.task-checkbox{width:22px;height:22px;border:2px solid var(--primary);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.2s;background:white;margin-top:2px}
+.task-checkbox:hover{background:var(--accent)}
+.task-checkbox.checked{background:var(--primary);border-color:var(--primary)}
+.task-checkbox.checked::after{content:"✓";color:white;font-weight:bold;font-size:13px}
+.task-text{flex:1;font-weight:500;font-size:0.95rem}
+.task-meta{font-size:0.75rem;color:var(--text-muted);background:white;padding:2px 10px;border-radius:50px;flex-shrink:0;margin-top:2px}
+.task-item.special{border-left:4px solid var(--warning)}
+.task-item.routine{border-left:4px solid var(--primary-light)}
+.delete-btn{background:none;border:none;color:var(--danger);cursor:pointer;font-size:1.1rem;opacity:0;transition:opacity 0.2s,transform 0.2s;padding:4px;flex-shrink:0;margin-top:2px}
+.task-item:hover .delete-btn{opacity:1}
+.delete-btn:hover{transform:scale(1.2)}
+.task-photos{display:flex;gap:8px;flex-wrap:wrap;padding-left:34px}
+.task-photo-wrap{position:relative;display:inline-block}
+.task-photo-thumb{width:60px;height:60px;border-radius:8px;object-fit:cover;cursor:pointer;border:2px solid var(--border);transition:transform 0.2s;display:block}
+.task-photo-thumb:hover{transform:scale(1.05);border-color:var(--primary)}
+.task-photo-del{position:absolute;top:-6px;right:-6px;background:var(--danger);color:white;border:none;width:20px;height:20px;border-radius:50%;font-size:0.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0;box-shadow:0 1px 4px rgba(0,0,0,0.3)}
+.add-photo-btn{width:60px;height:60px;border-radius:8px;border:2px dashed var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.5rem;color:var(--text-muted);transition:all 0.2s;flex-shrink:0}
+.add-photo-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--accent)}
+
+.timer-display{font-size:0.8rem;color:var(--text-muted);background:white;padding:2px 8px;border-radius:50px;margin-left:8px;font-family:'Courier New',monospace}
+.timer-active{color:var(--primary);font-weight:600;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.timer-btn{background:none;border:none;font-size:1.2rem;cursor:pointer;padding:4px;margin-left:4px;opacity:0;transition:opacity 0.2s}
+.task-item:hover .timer-btn{opacity:1}
+
+.input-group{display:flex;gap:8px;margin-bottom:14px}
+.input-field{flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:1rem;transition:border-color 0.2s;font-family:inherit;-webkit-appearance:none;appearance:none}
+.input-field:focus{outline:none;border-color:var(--primary)}
+select.input-field{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+
+.btn{padding:10px 20px;border:none;border-radius:var(--radius-sm);font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-appearance:none;appearance:none}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:var(--primary);color:white}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-secondary{background:var(--accent);color:var(--primary-dark)}
+.btn-secondary:hover{background:#b7e4c7}
+.btn-warning{background:var(--warning);color:white}
+.btn-warning:hover{background:#e08e45}
+.btn-danger{background:var(--danger);color:white}
+.btn-danger:hover{background:#d45a3d}
+.btn-sm{padding:6px 12px;font-size:0.85rem}
+.btn-ghost{background:transparent;color:var(--primary);border:2px solid var(--primary)}
+.btn-ghost:hover{background:var(--accent)}
+
+.upload-area{border:2px dashed var(--primary-light);border-radius:var(--radius-sm);padding:24px;text-align:center;background:var(--accent);transition:all 0.2s;cursor:pointer;margin-bottom:14px}
+.upload-area:hover{border-color:var(--primary);background:#c7f0d2}
+.upload-area.dragover{border-color:var(--primary-dark);background:#b7e4c7}
+.upload-icon{font-size:2rem;margin-bottom:8px}
+.upload-text{color:var(--primary-dark);font-weight:600;font-size:0.95rem}
+.upload-hint{color:var(--text-muted);font-size:0.8rem;margin-top:4px}
+
+.schedule-table{width:100%;border-collapse:collapse}
+.schedule-table th,.schedule-table td{padding:10px;text-align:left;border-bottom:1px solid var(--border);font-size:0.9rem}
+.schedule-table th{background:var(--accent);color:var(--primary-dark);font-weight:600;position:sticky;top:0}
+.schedule-table tr:hover{background:var(--bg)}
+
+.badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:0.75rem;font-weight:600}
+.badge-routine{background:#d1fae5;color:#065f46}
+.badge-special{background:#fef3c7;color:#92400e}
+.badge-urgent{background:#fee2e2;color:#991b1b}
+.badge-low{background:#dbeafe;color:#1e40af}
+.badge-medium{background:#fef3c7;color:#92400e}
+.badge-high{background:#fee2e2;color:#991b1b}
+
+.message-box{background:rgba(27,67,50,0.95);color:#d8f3dc;padding:18px;border-radius:var(--radius-sm);font-family:-apple-system,BlinkMacSystemFont,'Courier New',monospace;font-size:0.9rem;line-height:1.6;margin-top:14px;white-space:pre-wrap;word-break:break-word;min-height:120px;max-height:300px;overflow-y:auto}
+.message-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+
+.tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--bg);padding:4px;border-radius:var(--radius-sm)}
+.tab{padding:8px 16px;border:none;background:transparent;border-radius:8px;cursor:pointer;font-weight:600;color:var(--text-muted);transition:all 0.2s;flex:1;font-size:0.9rem}
+.tab.active{background:white;color:var(--primary-dark);box-shadow:var(--shadow)}
+
+.toast{position:fixed;bottom:20px;right:20px;background:var(--primary-dark);color:white;padding:12px 20px;border-radius:12px;box-shadow:var(--shadow-hover);transform:translateY(100px);opacity:0;transition:all 0.3s;z-index:2000;font-weight:500;font-size:0.95rem}
+.toast.show{transform:translateY(0);opacity:1}
+
+.empty-state{text-align:center;padding:32px 16px;color:var(--text-muted)}
+.empty-state-icon{font-size:2.5rem;margin-bottom:10px;opacity:0.5}
+
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg);border-radius:3px}
+::-webkit-scrollbar-thumb{background:var(--primary-light);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--primary)}
+
+.photo-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:3000;align-items:center;justify-content:center;padding:20px}
+.photo-modal.active{display:flex}
+.photo-modal img{max-width:90%;max-height:85vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.photo-modal-close{position:absolute;top:20px;right:30px;color:white;font-size:2.5rem;cursor:pointer;background:none;border:none;text-shadow:0 2px 10px rgba(0,0,0,0.5);z-index:3001}
+.photo-modal-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.2);border:none;color:white;font-size:2rem;width:50px;height:50px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);z-index:3001}
+.photo-modal-nav:hover{background:rgba(255,255,255,0.4)}
+.photo-modal-prev{left:20px}
+.photo-modal-next{right:20px}
+.photo-modal-info{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:white;background:rgba(0,0,0,0.6);padding:8px 20px;border-radius:50px;font-size:0.9rem}
+
+.photo-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:10px}
+.photo-gallery-item{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid var(--border)}
+.photo-gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.3s}
+.photo-gallery-item:hover img{transform:scale(1.1)}
+.photo-gallery-item .photo-delete{position:absolute;top:4px;right:4px;background:var(--danger);color:white;border:none;width:24px;height:24px;border-radius:50%;font-size:0.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s}
+.photo-gallery-item:hover .photo-delete{opacity:1}
+
+.camera-btn-group{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.camera-btn{flex:1;min-width:120px;padding:14px 20px;border-radius:var(--radius-sm);border:2px solid var(--primary);background:white;color:var(--primary);font-weight:700;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s;touch-action:manipulation;-webkit-appearance:none;appearance:none}
+.camera-btn:hover{background:var(--accent);transform:translateY(-2px)}
+.camera-btn:active{transform:scale(0.97)}
+
+input[type="file"]{opacity:0;position:absolute;width:1px;height:1px;overflow:hidden;z-index:-1}
+
+.inventory-location{background:var(--bg);border-radius:var(--radius-sm);padding:16px;margin-bottom:12px;border-left:4px solid var(--primary)}
+.inventory-location-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.inventory-location-title{font-weight:700;font-size:1rem;color:var(--primary-dark)}
+.inventory-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:white;border-radius:8px;margin-bottom:6px;border:1px solid var(--border)}
+.inventory-item-name{font-weight:500;flex:1}
+.inventory-item-qty{display:flex;align-items:center;gap:8px}
+.qty-btn{width:28px;height:28px;border-radius:50%;border:none;background:var(--primary);color:white;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.qty-btn:hover{background:var(--primary-dark)}
+.qty-btn.minus{background:var(--danger)}
+.qty-btn.minus:hover{background:#d45a3d}
+.qty-value{font-weight:700;min-width:30px;text-align:center;font-family:'Courier New',monospace}
+.inventory-add-form{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.inventory-add-form .input-field{flex:1;min-width:120px}
+
+.fly-light-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.fly-light-card{background:var(--bg);border-radius:var(--radius-sm);padding:16px;border:2px solid var(--border);transition:all 0.2s}
+.fly-light-card:hover{border-color:var(--primary-light)}
+.fly-light-card.needs-service{border-color:var(--warning);background:#fef3c7}
+.fly-light-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.fly-light-name{font-weight:700;font-size:1rem}
+.fly-light-status{font-size:0.8rem;padding:4px 12px;border-radius:50px;font-weight:600}
+.fly-light-status.good{background:#d1fae5;color:#065f46}
+.fly-light-status.needs-tube{background:#fef3c7;color:#92400e}
+.fly-light-status.needs-clean{background:#fee2e2;color:#991b1b}
+.fly-light-detail{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:0.9rem}
+.fly-light-detail:last-child{border-bottom:none}
+.fly-light-actions{display:flex;gap:8px;margin-top:12px}
+.fly-light-actions .btn{flex:1;padding:8px;font-size:0.85rem}
+
+/* Fly Light management (Princess 44) */
+.fl-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
+.fl-stat{background:var(--bg);border-radius:var(--radius-sm);padding:10px;text-align:center;border-left:3px solid var(--primary)}
+.fl-stat.warn{border-left-color:var(--warning)}
+.fl-stat.bad{border-left-color:var(--danger)}
+.fl-stat.ok{border-left-color:#10b981}
+.fl-stat-num{font-size:1.4rem;font-weight:700;color:var(--primary-dark)}
+.fl-stat-lbl{font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.3px}
+.fl-progress{height:10px;background:var(--border);border-radius:50px;overflow:hidden;margin:10px 0}
+.fl-progress-bar{height:100%;background:linear-gradient(90deg,var(--primary-light),var(--primary));transition:width 0.3s}
+.fl-unit{display:flex;align-items:center;gap:10px;padding:8px 12px;background:white;border-radius:8px;margin-bottom:6px;border:1px solid var(--border)}
+.fl-unit.inactive{background:#fff5f0;border-color:var(--danger)}
+.fl-unit.done{opacity:0.62;background:#e8f5e9}
+.fl-unit-num{font-weight:700;font-family:'Courier New',monospace;min-width:30px;color:var(--primary-dark)}
+.fl-unit-loc{flex:1;font-weight:500;font-size:0.92rem;line-height:1.35}
+.fl-unit-sub{font-size:0.74rem;color:var(--text-muted);margin-top:2px}
+.fl-unit-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.fl-mini-btn{border:none;border-radius:6px;padding:6px 10px;font-size:0.82rem;font-weight:600;cursor:pointer;touch-action:manipulation}
+.fl-mini-ok{background:var(--primary);color:white}
+.fl-mini-warn{background:var(--warning);color:white}
+.fl-mini-ghost{background:var(--border);color:var(--text)}
+.fl-routine-card{background:linear-gradient(135deg,var(--accent),transparent);border:2px solid var(--primary-light);border-radius:var(--radius-sm);padding:14px;margin-bottom:12px}
+.fl-routine-head{display:flex;justify-content:space-between;align-items:center;font-weight:700;color:var(--primary-dark);margin-bottom:4px;flex-wrap:wrap;gap:6px}
+.fl-routine-head small{font-weight:600;font-size:0.76rem;color:var(--text-muted)}
+.fl-badge{display:inline-block;padding:2px 8px;border-radius:50px;font-size:0.68rem;font-weight:700;vertical-align:middle}
+.fl-badge.active{background:#d1fae5;color:#065f46}
+.fl-badge.inactive{background:#fee2e2;color:#991b1b}
+.fl-badge.pending{background:#fef3c7;color:#92400e}
+.fl-edit-form{flex-direction:column;align-items:stretch;gap:8px;border:2px solid var(--primary);background:var(--accent)}
+.fl-edit-title{font-weight:700;color:var(--primary-dark)}
+.fl-edit-row{display:flex;flex-direction:column;gap:4px}
+.fl-edit-row label{font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.3px}
+.fl-edit-form .input-field{font-size:0.95rem;padding:8px 12px}
+body.dark-mode .fl-edit-form{background:rgba(15,52,96,0.5)}
+body.dark-mode .fl-unit,body.dark-mode .fl-stat{background:rgba(26,26,62,0.9)}
+.sched-photo{width:100%;max-height:300px;object-fit:contain;border-radius:var(--radius-sm);border:1px solid var(--border);background:#fff;cursor:pointer;display:block}
+.sched-day{margin-bottom:14px}
+.sched-day-head{font-weight:700;color:var(--primary-dark);margin-bottom:6px;padding-bottom:4px;border-bottom:2px solid var(--accent)}
+.sched-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;background:white;border-radius:8px;margin-bottom:6px;border:1px solid var(--border);font-size:0.92rem}
+body.dark-mode .sched-item{background:rgba(26,26,62,0.9)}
+body.dark-mode .sched-photo{background:#16213e}
+.sched-note{background:var(--accent);border:1px solid var(--primary-light);border-radius:var(--radius-sm);padding:10px 12px;font-size:0.85rem;color:var(--primary-dark);display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+body.dark-mode .sched-note{background:rgba(15,52,96,0.5);color:#eaeaea}
+.cal-dow{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
+.cal-dow span{text-align:center;font-size:0.7rem;font-weight:700;color:var(--text-muted);text-transform:uppercase}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-cell{min-height:62px;border-radius:8px;border:1px solid var(--border);padding:3px;display:flex;flex-direction:column;cursor:pointer;background:white;transition:all 0.15s;overflow:hidden}
+.cal-cell:hover{border-color:var(--primary)}
+.cal-cell.empty{background:transparent;border:none;cursor:default;min-height:0}
+.cal-cell.has-tasks{background:var(--accent);border-color:var(--primary-light)}
+.cal-cell.today{border:2px solid var(--primary);box-shadow:0 0 0 2px rgba(45,106,79,0.2)}
+.cal-cell.selected{background:var(--primary);color:white;border-color:var(--primary)}
+.cal-num{font-size:0.78rem;font-weight:700;line-height:1}
+.cal-tasks{margin-top:2px;display:flex;flex-direction:column;gap:1px;overflow:hidden}
+.cal-task{font-size:0.52rem;line-height:1.2;background:var(--primary-light);color:#fff;border-radius:3px;padding:1px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-task.more{background:transparent;color:var(--primary-dark);padding:0 3px;font-weight:700}
+.cal-cell.selected .cal-task{background:rgba(255,255,255,0.28)}
+.cal-cell.selected .cal-task.more{color:#fff}
+@media(min-width:700px){.cal-cell{min-height:92px}.cal-task{font-size:0.68rem}}
+.cal-day-detail{margin-top:14px;padding:12px;background:var(--bg);border-radius:var(--radius-sm)}
+.cal-day-title{font-weight:700;color:var(--primary-dark);margin-bottom:8px}
+.day-section-label{font-weight:700;font-size:0.85rem;color:var(--text-muted);margin:12px 0 6px}
+.day-task{display:flex;align-items:center;gap:8px;padding:6px 10px;background:white;border:1px solid var(--border);border-radius:8px;margin-bottom:5px}
+.day-task.scheduled{background:var(--accent);border-color:var(--primary-light)}
+.day-task-text{flex:1;font-size:0.9rem}
+.day-task-time{font-weight:700;color:var(--primary-dark);font-size:0.8rem;min-width:60px}
+.day-time-input{border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-family:inherit;font-size:0.85rem;background:white}
+.day-timeline{border-radius:var(--radius-sm);overflow:hidden}
+.day-hour{display:flex;gap:8px;border-top:1px solid var(--border);min-height:32px;padding:4px 0}
+.day-hour:last-child{border-bottom:1px solid var(--border)}
+.day-hour-label{width:56px;flex-shrink:0;font-size:0.72rem;color:var(--text-muted);font-weight:600;padding-top:5px}
+.day-hour-slot{flex:1;display:flex;flex-direction:column;gap:4px}
+body.dark-mode .day-task{background:rgba(26,26,62,0.9)}
+body.dark-mode .day-task.scheduled{background:rgba(15,52,96,0.6)}
+body.dark-mode .day-time-input{background:rgba(26,26,62,0.9);color:#eaeaea;border-color:#2a2a4a}
+body.dark-mode .cal-cell{background:rgba(26,26,62,0.9)}
+body.dark-mode .cal-cell.has-tasks{background:rgba(15,52,96,0.7)}
+body.dark-mode .fl-unit.inactive{background:rgba(80,30,30,0.6)}
+body.dark-mode .fl-unit.done{background:rgba(20,60,40,0.6)}
+
+.voice-note-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:8px}
+.voice-note-play{width:40px;height:40px;border-radius:50%;background:var(--primary);color:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.voice-note-info{flex:1}
+.voice-note-date{font-size:0.8rem;color:var(--text-muted)}
+.voice-note-duration{font-weight:600;font-size:0.9rem}
+.voice-note-delete{background:none;border:none;color:var(--danger);cursor:pointer;font-size:1.1rem}
+.recording-indicator{display:none;align-items:center;gap:8px;color:var(--danger);font-weight:600;animation:pulse 1s infinite}
+.recording-indicator.active{display:flex}
+.recording-dot{width:12px;height:12px;background:var(--danger);border-radius:50%}
+
+.export-options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.export-card{background:var(--bg);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;border:2px solid transparent}
+.export-card:hover{border-color:var(--primary);transform:translateY(-2px)}
+.export-icon{font-size:2rem;margin-bottom:8px}
+.export-title{font-weight:700;margin-bottom:4px}
+.export-desc{font-size:0.85rem;color:var(--text-muted)}
+
+.tool-item{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:8px;border-left:4px solid var(--primary)}
+.tool-info{flex:1}
+.tool-name{font-weight:700;font-size:1rem}
+.tool-use{font-size:0.85rem;color:var(--text-muted);margin-top:2px}
+.tool-value{font-weight:700;color:var(--primary);font-size:1.1rem}
+
+@media(max-width:600px){
+.app-container{padding:10px}.header{padding:16px}.header h1{font-size:1.2rem}.date-display{font-size:0.85rem;padding:6px 12px}
+.stats-bar{grid-template-columns:repeat(2,1fr);gap:8px}.stat-card{padding:12px}.stat-value{font-size:1.4rem}
+.card-header{padding:12px 16px}.card-body{padding:12px 16px}.input-group{flex-direction:column}.btn{width:100%;justify-content:center}
+.message-actions{flex-direction:column}.photo-modal-nav{width:40px;height:40px;font-size:1.5rem}
+.camera-btn-group{flex-direction:column}.camera-btn{width:100%}.export-options{grid-template-columns:1fr}
+.fly-light-grid{grid-template-columns:1fr}.inventory-add-form{flex-direction:column}.tool-item{flex-direction:column;align-items:flex-start;gap:8px}
+.wallpaper-grid{grid-template-columns:repeat(2,1fr)}.color-picker-grid{grid-template-columns:repeat(4,1fr)}
+.settings-panel{max-width:95%}
+.fl-summary{grid-template-columns:repeat(3,1fr)}
+}
+
+.hidden{display:none!important}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.animate-in{animation:fadeIn 0.3s ease-out}
+
+.tab-content{display:none}
+.tab-content.active{display:block}
+</style>
+</head>
+<body>
+<div class="bg-overlay solid" id="bgOverlay"></div>
+<div class="app-container">
+<div class="header">
+<h1><span class="header-icon">🐜</span> Pest Tech Pro</h1>
+<div class="header-actions">
+<div class="date-display" id="currentDate"></div>
+<button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">🌙</button>
+<button class="settings-btn" onclick="openSettings()" title="Settings">⚙️</button>
+</div>
+</div>
+
+<div class="settings-overlay" id="settingsOverlay" onclick="closeSettings(event)">
+<div class="settings-panel" onclick="event.stopPropagation()">
+<div class="settings-header">
+<div class="settings-title">⚙️ Settings</div>
+<button class="settings-close" onclick="closeSettings()">&times;</button>
+</div>
+<div class="settings-body">
+<div class="settings-section">
+<div class="settings-section-title">🎨 Theme</div>
+<div class="theme-grid" id="themeGrid"></div>
+</div>
+<div class="settings-section">
+<div class="settings-section-title">🖼️ Wallpaper</div>
+<div class="wallpaper-grid" id="wallpaperGrid"></div>
+</div>
+<div class="settings-section">
+<div class="settings-section-title">🎨 Solid Colors</div>
+<div class="color-picker-grid" id="colorPickerGrid"></div>
+</div>
+<div class="settings-section">
+<div class="settings-section-title">📷 Custom Wallpaper</div>
+<div class="custom-wallpaper-area" id="customWallpaperArea" onclick="document.getElementById('customWallpaperInput').click()">
+<div class="upload-icon">📁</div>
+<div class="upload-text">Upload Your Own Wallpaper</div>
+<div class="upload-hint">Tap to browse or drop an image here</div>
+<input type="file" id="customWallpaperInput" accept="image/*" onchange="handleCustomWallpaper(event)">
+</div>
+</div>
+<div class="settings-section">
+<div class="settings-section-title">🔧 Options</div>
+<div style="display:flex;flex-direction:column;gap:12px;">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg);border-radius:8px;">
+<span>Dark Mode</span>
+<button class="btn btn-sm btn-secondary" onclick="toggleTheme();renderSettings();" id="darkModeBtn">🌙 Dark</button>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg);border-radius:8px;">
+<span>Background Opacity</span>
+<input type="range" min="30" max="100" value="85" id="opacitySlider" onchange="updateOpacity(this.value)" style="width:150px;">
+</div>
+<button class="btn btn-danger" onclick="resetWallpaper()">🔄 Reset to Default</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="stats-bar">
+<div class="stat-card" onclick="switchSection('dashboard');switchTaskTab('all')">
+<div class="stat-label">Today's Tasks</div>
+<div class="stat-value" id="statTotal">0</div>
+</div>
+<div class="stat-card success" onclick="switchSection('dashboard');switchTaskTab('routine')">
+<div class="stat-label">Completed</div>
+<div class="stat-value" id="statDone">0</div>
+</div>
+<div class="stat-card warning" onclick="switchSection('dashboard');switchTaskTab('special')">
+<div class="stat-label">Remaining</div>
+<div class="stat-value" id="statRemaining">0</div>
+</div>
+<div class="stat-card" id="progressCard" onclick="generateDailyMessage()">
+<div class="stat-label">Progress</div>
+<div class="stat-value" id="statProgress">0%</div>
+</div>
+</div>
+
+<div class="tabs" style="margin-bottom:20px;">
+<button class="tab active" onclick="switchSection('dashboard')" id="tab-dashboard">📋 Dashboard</button>
+<button class="tab" onclick="switchSection('flylights')" id="tab-flylights">💡 Fly Lights</button>
+<button class="tab" onclick="switchSection('inventory')" id="tab-inventory">📦 Inventory</button>
+<button class="tab" onclick="switchSection('tools')" id="tab-tools">🧰 Tools</button>
+<button class="tab" onclick="switchSection('backup')" id="tab-backup">💾 Backup</button>
+</div>
+
+<div id="dashboard-section" class="tab-content active">
+<div class="main-grid">
+<div class="card" style="grid-row:span 2;">
+<div class="card-header">
+<div class="card-title">📋 Today's Tasks</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;">
+<button class="btn btn-sm btn-secondary" onclick="generateDailyMessage()">📤 Send Update</button>
+<button class="btn btn-sm btn-danger" onclick="clearCompleted()">Clear Done</button>
+</div>
+</div>
+<div class="card-body">
+<div class="tabs">
+<button class="tab active" onclick="switchTaskTab('all')" id="task-tab-all">All</button>
+<button class="tab" onclick="switchTaskTab('routine')" id="task-tab-routine">Routine</button>
+<button class="tab" onclick="switchTaskTab('special')" id="task-tab-special">Special</button>
+</div>
+<div class="input-group">
+<input type="text" class="input-field" id="newTaskInput" placeholder="Add a special task from client...">
+<button class="btn btn-primary" onclick="addTask()">➕ Add</button>
+</div>
+<div class="upload-area" id="taskUploadArea" onclick="document.getElementById('taskFileInput').click()">
+<div class="upload-icon">📁</div>
+<div class="upload-text">Upload Client Tasks</div>
+<div class="upload-hint">Drop file here or click to browse (CSV/TXT)</div>
+<input type="file" id="taskFileInput" accept=".csv,.txt" style="display:none" onchange="handleTaskUpload(event)">
+</div>
+<div class="task-list" id="taskList">
+<div class="empty-state"><div class="empty-state-icon">📝</div><div>No tasks yet. Add tasks or upload a file.</div></div>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header">
+<div class="card-title">📅 Monthly Schedule</div>
+<button class="btn btn-sm btn-primary" onclick="document.getElementById('schedPdfInput').click()">📄 Import PDF</button>
+<input type="file" id="schedPdfInput" accept="application/pdf,.pdf" style="display:none" onchange="importSchedulePDF(event)">
+</div>
+<div class="card-body">
+<div class="upload-area" id="schedPdfArea" onclick="document.getElementById('schedPdfInput').click()" style="border-color:var(--primary);background:var(--accent);">
+<div class="upload-icon">📄</div>
+<div class="upload-text">Import PDF Schedule (auto-reads the calendar)</div>
+<div class="upload-hint">Drop a text-based PDF like the Princess monthly schedule — needs internet the first time</div>
+</div>
+<div class="upload-area" id="scheduleImgArea" onclick="document.getElementById('scheduleImgInput').click()">
+<div class="upload-icon">📷</div>
+<div class="upload-text">Or Drop / Upload Calendar Photo</div>
+<div class="upload-hint">A picture of the month's calendar — kept for reference only</div>
+<input type="file" id="scheduleImgInput" accept="image/*" onchange="handleScheduleImage(event)">
+</div>
+<div id="scheduleImgWrap"></div>
+<div class="input-group" style="margin:14px 0;flex-wrap:wrap;">
+<select class="input-field" id="schedDay" style="flex:1;min-width:120px;">
+<option value="Mon">Monday</option>
+<option value="Tue">Tuesday</option>
+<option value="Wed">Wednesday</option>
+<option value="Thu">Thursday</option>
+<option value="Fri">Friday</option>
+<option value="Sat">Saturday</option>
+<option value="Sun">Sunday</option>
+<option value="Daily">Every day</option>
+</select>
+<input type="text" class="input-field" id="schedTask" placeholder="Task for that day" style="flex:2;min-width:140px;">
+<button class="btn btn-primary" onclick="addScheduleEntry()">Add</button>
+</div>
+<div id="scheduleContent">
+<div class="empty-state"><div class="empty-state-icon">📆</div><div>No scheduled tasks yet.</div><div style="font-size:0.75rem;margin-top:8px;color:var(--text-muted);">Drop your calendar photo above, then add each day's tasks below.</div></div>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header">
+<div class="card-title">💬 Work Group Message</div>
+<button class="btn btn-sm btn-secondary" onclick="copyMessage()">📋 Copy</button>
+</div>
+<div class="card-body">
+<div class="message-box" id="messageBox">Click "Send Update" to generate your daily work report...</div>
+<div class="message-actions">
+<button class="btn btn-primary btn-sm" onclick="generateDailyMessage()">🔄 Daily Update</button>
+<button class="btn btn-secondary btn-sm" onclick="generateCompletionMessage()">✅ Completion</button>
+<button class="btn btn-ghost btn-sm" onclick="generatePhotoReport()">📸 Photo Report</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="card" style="margin-top:20px;">
+<div class="card-header">
+<div class="card-title">🗓️ Service Calendar</div>
+<div style="display:flex;gap:8px;align-items:center;">
+<button class="btn btn-sm btn-ghost" onclick="calPrev()">◀</button>
+<span id="calLabel" style="font-weight:700;min-width:140px;text-align:center;"></span>
+<button class="btn btn-sm btn-ghost" onclick="calNext()">▶</button>
+</div>
+</div>
+<div class="card-body">
+<div id="calGrid"></div>
+<div id="calDayDetail"></div>
+</div>
+</div>
+
+<div class="card" style="margin-top:20px;">
+<div class="card-header">
+<div class="card-title">📸 Job Site Photos</div>
+<span style="font-size:0.85rem;color:var(--text-muted);" id="photoCount">0 photos</span>
+</div>
+<div class="card-body">
+<div class="camera-btn-group">
+<label class="camera-btn" for="cameraInput">📷 Take Photo</label>
+<label class="camera-btn" for="galleryInput" style="border-color:var(--warning);color:var(--warning);">🖼️ Browse Gallery</label>
+</div>
+<input type="file" id="cameraInput" accept="image/*" capture="environment" onchange="handlePhotoFileSelect(event)">
+<input type="file" id="galleryInput" accept="image/*" multiple onchange="handlePhotoFileSelect(event)">
+<div class="upload-area" id="photoUploadArea"><div class="upload-icon">📁</div><div class="upload-text">Drop Photos Here</div><div class="upload-hint">Or use the buttons above</div></div>
+<div class="photo-gallery" id="photoGallery"></div>
+</div>
+</div>
+
+<div class="card" style="margin-top:20px;">
+<div class="card-header">
+<div class="card-title">🎙️ Voice Notes</div>
+<div class="recording-indicator" id="recordingIndicator"><div class="recording-dot"></div><span>Recording... <span id="recordingTime">0:00</span></span></div>
+</div>
+<div class="card-body">
+<div style="display:flex;gap:10px;margin-bottom:14px;">
+<button class="btn btn-primary" style="flex:1;" onclick="startRecording()" id="recordBtn">🎙️ Start Recording</button>
+<button class="btn btn-danger" style="flex:1;" onclick="stopRecording()" id="stopBtn" disabled>⏹️ Stop</button>
+</div>
+<div id="voiceNotesList">
+<div class="empty-state"><div class="empty-state-icon">🎙️</div><div>No voice notes yet. Tap record to add one.</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="flylights-section" class="tab-content">
+<div class="card">
+<div class="card-header">
+<div class="card-title">💡 Fly Light Management</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;">
+<button class="btn btn-sm btn-secondary" onclick="document.getElementById('flyImportInput').click()">📁 Import CSV</button>
+<button class="btn btn-sm btn-warning" onclick="resetFlyWeek()">🔄 New Week</button>
+<button class="btn btn-sm btn-ghost" onclick="seedFlyLights(true)">↺ Reload 44</button>
+<input type="file" id="flyImportInput" accept=".csv,.txt" style="display:none" onchange="importFlyLightsCSV(event)">
+</div>
+</div>
+<div class="card-body">
+<div class="fl-summary" id="flSummary"></div>
+<div id="flRoutePanel"></div>
+<div class="input-group" style="margin:16px 0;flex-wrap:wrap;">
+<input type="text" class="input-field" id="flyLightLoc" placeholder="Add a unit location (e.g., Main kitchen)" style="flex:2;">
+<button class="btn btn-primary" onclick="addFlyLight()">Add Unit</button>
+</div>
+<div id="flyLightList">
+<div class="empty-state"><div class="empty-state-icon">💡</div><div>No fly lights yet. Add a unit or tap "Reload 44".</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="inventory-section" class="tab-content">
+<div class="card">
+<div class="card-header"><div class="card-title">📦 Chemical & Product Inventory</div></div>
+<div class="card-body">
+<div class="input-group" style="margin-bottom:16px;">
+<input type="text" class="input-field" id="newLocationName" placeholder="New location (e.g., Truck, Storage Room)">
+<button class="btn btn-primary" onclick="addInventoryLocation()">Add Location</button>
+</div>
+<div id="inventoryContainer">
+<div class="empty-state"><div class="empty-state-icon">📦</div><div>No inventory locations yet. Add your first location above.</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="tools-section" class="tab-content">
+<div class="card">
+<div class="card-header"><div class="card-title">🧰 Tools & Equipment</div></div>
+<div class="card-body">
+<div class="input-group" style="margin-bottom:16px;flex-wrap:wrap;">
+<input type="text" class="input-field" id="toolName" placeholder="Tool name" style="flex:2;">
+<input type="text" class="input-field" id="toolValue" placeholder="Value ($)" style="flex:1;">
+<input type="text" class="input-field" id="toolUse" placeholder="Use/Description" style="flex:2;">
+<button class="btn btn-primary" onclick="addTool()">Add</button>
+</div>
+<div id="toolsContainer">
+<div class="empty-state"><div class="empty-state-icon">🧰</div><div>No tools added yet. Add your tools above.</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="backup-section" class="tab-content">
+<div class="card">
+<div class="card-header"><div class="card-title">💾 Backup & Export</div></div>
+<div class="card-body">
+<div class="export-options">
+<div class="export-card" onclick="exportAllData()"><div class="export-icon">📥</div><div class="export-title">Export All Data</div><div class="export-desc">Download JSON backup</div></div>
+<div class="export-card" onclick="exportPhotos()"><div class="export-icon">📸</div><div class="export-title">Export Photos</div><div class="export-desc">Download all photos</div></div>
+<div class="export-card" onclick="exportReportPDF()"><div class="export-icon">📄</div><div class="export-title">Export PDF Report</div><div class="export-desc">Phone & computer friendly</div></div>
+<div class="export-card" onclick="document.getElementById('importFileInput').click()"><div class="export-icon">📤</div><div class="export-title">Import Data</div><div class="export-desc">Restore from backup</div></div>
+</div>
+<input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImport(event)">
+</div>
+</div>
+</div>
+</div>
+
+<div class="photo-modal" id="photoModal" onclick="closePhotoModal(event)">
+<button class="photo-modal-close" onclick="closePhotoModal()">&times;</button>
+<button class="photo-modal-nav photo-modal-prev" onclick="navigatePhoto(-1)">&#10094;</button>
+<img src="" alt="Photo" id="modalImage">
+<button class="photo-modal-nav photo-modal-next" onclick="navigatePhoto(1)">&#10095;</button>
+<div class="photo-modal-info" id="modalInfo"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== DATA & STATE ====================
+var tasks = [];
+var schedule = [];
+var scheduleImage = null;
+var photos = [];
+var DAY_CODES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var DAY_FULL = {Sun:'Sunday', Mon:'Monday', Tue:'Tuesday', Wed:'Wednesday', Thu:'Thursday', Fri:'Friday', Sat:'Saturday', Daily:'Every day'};
+var flyLights = [];
+var inventory = {};
+var tools = [];
+var voiceNotes = [];
+var mediaRecorder = null;
+var audioChunks = [];
+var recordingTimer = null;
+var recordingSeconds = 0;
+var currentPhotoIndex = 0;
+var modalPhotoSet = [];
+var currentTaskFilter = 'all';
+var flEditId = null;
+var calMonth = new Date().getMonth();
+var calYear = new Date().getFullYear();
+var selectedDate = null;
+var currentWallpaper = null;
+var currentOpacity = 85;
+
+// Built-in wallpapers
+var wallpapers = [
+    {url:'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=1200&q=80', label:'Green Leaves'},
+    {url:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&q=80', label:'Abstract Blue'},
+    {url:'https://images.unsplash.com/photo-1557683316-973673baf926?w=1200&q=80', label:'Purple Gradient'},
+    {url:'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&q=80', label:'Geometric'},
+    {url:'https://images.unsplash.com/photo-1550684376-efcbd6e3f031?w=1200&q=80', label:'Dark Texture'},
+    {url:'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1200&q=80', label:'Nature'},
+    {url:'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1200&q=80', label:'Landscape'},
+    {url:'https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=1200&q=80', label:'Waterfall'},
+    {url:'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80', label:'Forest'}
+];
+
+var colors = [
+    '#e8f5e9','#d1fae5','#dcfce7','#ecfccb','#fef3c7',
+    '#ffedd5','#fee2e2','#fce7f3','#f3e8ff','#e0e7ff','#dbeafe','#cffafe'
+];
+
+// Accent color themes (recolor primary palette)
+var THEMES = {
+    green:   {name:'Forest',  primary:'#2d6a4f', light:'#40916c', dark:'#1b4332', accent:'#d8f3dc'},
+    ocean:   {name:'Ocean',   primary:'#1d6fb8', light:'#3b8fd4', dark:'#0d4a7a', accent:'#d6ebfb'},
+    teal:    {name:'Teal',    primary:'#0d9488', light:'#14b8a6', dark:'#0f5f57', accent:'#cffafe'},
+    purple:  {name:'Purple',  primary:'#6d28d9', light:'#8b5cf6', dark:'#4c1d95', accent:'#ede9fe'},
+    sunset:  {name:'Sunset',  primary:'#d2562b', light:'#ef7a4e', dark:'#9c3a17', accent:'#ffe7d6'},
+    crimson: {name:'Crimson', primary:'#b91c4b', light:'#e23a6b', dark:'#7f1532', accent:'#fde0e8'},
+    slate:   {name:'Slate',   primary:'#475569', light:'#64748b', dark:'#1e293b', accent:'#e2e8f0'}
+};
+var currentTheme = 'green';
+
+function applyTheme(key) {
+    var t = THEMES[key]; if(!t) return;
+    currentTheme = key;
+    var r = document.documentElement.style;
+    r.setProperty('--primary', t.primary);
+    r.setProperty('--primary-light', t.light);
+    r.setProperty('--primary-dark', t.dark);
+    r.setProperty('--accent', t.accent);
+    try { localStorage.setItem('pestTechTheme', key); } catch(e) {}
+}
+
+function applyThemeAndRender(key) {
+    applyTheme(key);
+    renderSettings();
+    showToast('🎨 ' + THEMES[key].name + ' theme applied');
+}
+
+// Princess fly lamp roster (44 units) — from PRINCESS_FLY_LAMP_MANAGEMENT sheet
+var FLY_SEED = [
+    {n:1,loc:'Reef'},{n:2,loc:'Reef'},{n:3,loc:'Reef'},{n:4,loc:'Aqua'},
+    {n:5,loc:'Grand buffet'},{n:6,loc:'Grand buffet'},
+    {n:7,loc:'Main kitchen'},{n:8,loc:'Main kitchen'},{n:9,loc:'Main kitchen'},{n:10,loc:'Main kitchen'},{n:11,loc:'Main kitchen'},
+    {n:12,loc:'Senses buffet'},{n:13,loc:'Senses buffet'},{n:14,loc:'Senses buffet'},{n:15,loc:'Senses buffet'},
+    {n:16,loc:'Pastry'},
+    {n:17,loc:'Pastry',status:'Inactive',reason:'Electricity'},
+    {n:18,loc:'Main kitchen butcher shop',status:'Inactive',reason:'No plug / electricity'},
+    {n:19,loc:'Suite service'},{n:20,loc:'Wear-house'},
+    {n:21,loc:'Loading dock entrance'},{n:22,loc:'Loading dock entrance'},
+    {n:23,loc:'Main kitchen pot wash'},
+    {n:24,loc:'Cafeteria'},{n:25,loc:'Cafeteria'},{n:26,loc:'Cafeteria'},{n:27,loc:'Cafeteria'},{n:28,loc:'Cafeteria'},
+    {n:29,loc:'Cafeteria',status:'Inactive',reason:'Blown Bulb'},
+    {n:30,loc:'Cafeteria exit'},{n:31,loc:'Snack bar'},
+    {n:32,loc:'Platinum kitchen'},{n:33,loc:'Platinum kitchen'},
+    {n:34,loc:'MVP kitchen'},{n:35,loc:'Il Palazzo'},{n:36,loc:'El Delirio'},
+    {n:37,loc:'Jamrock'},{n:38,loc:'Jamrock'},
+    {n:39,loc:'Robert Flame'},{n:40,loc:'Robert Flame'},
+    {n:41,loc:'Umami'},{n:42,loc:'Umami'},
+    {n:43,loc:''},{n:44,loc:''}
+];
+
+function flySeedData() {
+    return FLY_SEED.map(function(u) {
+        var st = u.status || 'Active';
+        return {id:'fl' + u.n, num:u.n, location:u.loc, status:st, inactiveReason:u.reason || '', check:st === 'Inactive' ? 'Pending' : 'Clear', lastCheckedISO:null, notes:'', lastUpdated:new Date().toISOString()};
+    });
+}
+
+// ==================== INIT ====================
+document.addEventListener('DOMContentLoaded', function() {
+    loadFromStorage();
+    updateDate();
+    renderTasks();
+    renderSchedule();
+    renderPhotos();
+    renderFlyLights();
+    renderInventory();
+    renderTools();
+    renderVoiceNotes();
+    renderSettings();
+    selectedDate = todayISO();
+    renderCalendar();
+    addTodaySchedule(true);
+    scheduleReminders();
+    updateStats();
+    setupDragDrop();
+});
+
+function updateDate() {
+    var now = new Date();
+    var options = {weekday:'short', month:'short', day:'numeric'};
+    document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+}
+
+// ==================== SETTINGS & WALLPAPER ====================
+function openSettings() {
+    document.getElementById('settingsOverlay').classList.add('active');
+    renderSettings();
+}
+
+function closeSettings(e) {
+    if(e && e.target !== document.getElementById('settingsOverlay')) return;
+    document.getElementById('settingsOverlay').classList.remove('active');
+}
+
+function renderSettings() {
+    var tg = document.getElementById('themeGrid');
+    if(tg) {
+        var th = '';
+        Object.keys(THEMES).forEach(function(k) {
+            var t = THEMES[k];
+            var act = currentTheme === k ? 'active' : '';
+            th += '<div class="theme-swatch ' + act + '" onclick="applyThemeAndRender(\'' + k + '\')"><span style="background:' + t.dark + '"></span><span style="background:' + t.primary + '"></span><span style="background:' + t.light + '"></span><span style="background:' + t.accent + '"></span><div class="theme-name">' + t.name + '</div></div>';
+        });
+        tg.innerHTML = th;
+    }
+
+    var grid = document.getElementById('wallpaperGrid');
+    var html = '';
+    for(var i = 0; i < wallpapers.length; i++) {
+        var active = currentWallpaper === wallpapers[i].url ? 'active' : '';
+        html += '<div class="wallpaper-thumb ' + active + '" style="background-image:url(' + wallpapers[i].url + ')" onclick="setWallpaper(\'' + wallpapers[i].url + '\')"><div class="wallpaper-label">' + wallpapers[i].label + '</div></div>';
+    }
+    grid.innerHTML = html;
+
+    var cgrid = document.getElementById('colorPickerGrid');
+    var chtml = '';
+    for(var i = 0; i < colors.length; i++) {
+        var active = currentWallpaper === 'color:' + colors[i] ? 'active' : '';
+        chtml += '<div class="color-swatch ' + active + '" style="background:' + colors[i] + '" onclick="setColorWallpaper(\'' + colors[i] + '\')"></div>';
+    }
+    cgrid.innerHTML = chtml;
+
+    var dmBtn = document.getElementById('darkModeBtn');
+    if(document.body.classList.contains('dark-mode')) {
+        dmBtn.textContent = '☀️ Light';
+    } else {
+        dmBtn.textContent = '🌙 Dark';
+    }
+
+    document.getElementById('opacitySlider').value = currentOpacity;
+}
+
+function setWallpaper(url) {
+    currentWallpaper = url;
+    document.body.style.backgroundImage = 'url(' + url + ')';
+    document.body.classList.add('has-wallpaper');
+    document.getElementById('bgOverlay').classList.add('wallpaper-active');
+    updateOpacity(currentOpacity);
+    renderSettings();
+    saveToStorage();
+    showToast('🎨 Wallpaper applied!');
+}
+
+function setColorWallpaper(color) {
+    currentWallpaper = 'color:' + color;
+    document.body.style.backgroundImage = 'none';
+    document.body.style.backgroundColor = color;
+    document.body.classList.remove('has-wallpaper');
+    document.getElementById('bgOverlay').style.background = 'rgba(255,255,255,0.1)';
+    renderSettings();
+    saveToStorage();
+    showToast('🎨 Color applied!');
+}
+
+function handleCustomWallpaper(event) {
+    var file = event.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        currentWallpaper = e.target.result;
+        document.body.style.backgroundImage = 'url(' + e.target.result + ')';
+        document.body.classList.add('has-wallpaper');
+        document.getElementById('bgOverlay').classList.add('wallpaper-active');
+        updateOpacity(currentOpacity);
+        renderSettings();
+        saveToStorage();
+        showToast('🎨 Custom wallpaper applied!');
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
+}
+
+function updateOpacity(val) {
+    currentOpacity = val;
+    var overlay = document.getElementById('bgOverlay');
+    if(document.body.classList.contains('has-wallpaper')) {
+        overlay.style.background = 'rgba(248,249,250,' + (val/100) + ')';
+        if(document.body.classList.contains('dark-mode')) {
+            overlay.style.background = 'rgba(26,26,46,' + (val/100) + ')';
+        }
+    }
+    saveToStorage();
+}
+
+function resetWallpaper() {
+    currentWallpaper = null;
+    document.body.style.backgroundImage = '';
+    document.body.style.backgroundColor = '';
+    document.body.classList.remove('has-wallpaper');
+    document.getElementById('bgOverlay').classList.remove('wallpaper-active');
+    document.getElementById('bgOverlay').style.background = 'var(--bg-overlay)';
+    renderSettings();
+    saveToStorage();
+    showToast('🔄 Reset to default');
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+    if(document.body.classList.contains('has-wallpaper')) {
+        updateOpacity(currentOpacity);
+    }
+    saveToStorage();
+}
+
+// ==================== SECTIONS ====================
+function switchSection(name) {
+    document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+    document.getElementById(name + '-section').classList.add('active');
+    document.querySelectorAll('.tabs .tab').forEach(function(el) { el.classList.remove('active'); });
+    document.getElementById('tab-' + name).classList.add('active');
+}
+
+function switchTaskTab(filter) {
+    document.querySelectorAll('#dashboard-section .tabs .tab').forEach(function(el) { el.classList.remove('active'); });
+    document.getElementById('task-tab-' + filter).classList.add('active');
+    renderTasks(filter);
+}
+
+// ==================== TASKS ====================
+function addTask() {
+    var input = document.getElementById('newTaskInput');
+    var text = input.value.trim();
+    if(!text) return;
+    tasks.push({id:Date.now(), text:text, completed:false, type:'special', photos:[], timer:null, created:new Date().toISOString()});
+    input.value = '';
+    saveToStorage();
+    renderTasks(currentTaskFilter);
+    updateStats();
+    showToast('✅ Task added!');
+}
+
+function toggleTask(id) {
+    for(var i = 0; i < tasks.length; i++) {
+        if(tasks[i].id === id) {
+            tasks[i].completed = !tasks[i].completed;
+            break;
+        }
+    }
+    saveToStorage();
+    renderTasks(currentTaskFilter);
+    updateStats();
+}
+
+function deleteTask(id) {
+    if(!confirm('Delete this task?')) return;
+    var newTasks = [];
+    for(var i = 0; i < tasks.length; i++) { if(tasks[i].id !== id) newTasks.push(tasks[i]); }
+    tasks = newTasks;
+    saveToStorage();
+    renderTasks(currentTaskFilter);
+    updateStats();
+    showToast('Task deleted');
+}
+
+function clearCompleted() {
+    if(!confirm('Clear all completed tasks?')) return;
+    var newTasks = [];
+    for(var i = 0; i < tasks.length; i++) { if(!tasks[i].completed) newTasks.push(tasks[i]); }
+    tasks = newTasks;
+    saveToStorage();
+    renderTasks(currentTaskFilter);
+    updateStats();
+    showToast('Completed tasks cleared');
+}
+
+function renderTasks(filter) {
+    filter = filter || 'all';
+    currentTaskFilter = filter;
+    var container = document.getElementById('taskList');
+    var routineHtml = (filter === 'all' || filter === 'routine') ? (buildTodayScheduleHtml() + buildFlyRoutineHtml()) : '';
+    var filtered = [];
+    for(var i = 0; i < tasks.length; i++) {
+        if(filter === 'all' || tasks[i].type === filter) filtered.push(tasks[i]);
+    }
+    if(!filtered.length && !routineHtml) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div><div>No ' + filter + ' tasks yet.</div></div>';
+        return;
+    }
+    var html = routineHtml;
+    for(var i = 0; i < filtered.length; i++) {
+        var t = filtered[i];
+        var checked = t.completed ? 'checked' : '';
+        var completedClass = t.completed ? 'completed' : '';
+        var typeClass = t.type === 'special' ? 'special' : 'routine';
+        var timerDisplay = t.timer ? '<span class="timer-display timer-active">' + formatTime(t.timer) + '</span>' : '';
+        var pics = t.photos || [];
+        var photoHtml = '<div class="task-photos">';
+        for(var p = 0; p < pics.length; p++) {
+            photoHtml += '<span class="task-photo-wrap"><img class="task-photo-thumb" src="' + pics[p].data + '" onclick="openTaskPhotoModal(' + t.id + ',' + p + ')"><button class="task-photo-del" onclick="deleteTaskPhoto(' + t.id + ',\'' + pics[p].id + '\',event)">✕</button></span>';
+        }
+        photoHtml += '<label class="add-photo-btn" for="taskPhotoInput-' + t.id + '" title="Add photo">+</label><input type="file" id="taskPhotoInput-' + t.id + '" accept="image/*" multiple onchange="addTaskPhoto(' + t.id + ', this)"></div>';
+        var row = '<div class="task-row"><div class="task-checkbox ' + checked + '" onclick="toggleTask(' + t.id + ')"></div><div class="task-text">' + escapeHtml(t.text) + timerDisplay + '</div><div class="task-meta">' + (t.type === 'special' ? '<span class="badge badge-special">Special</span>' : '<span class="badge badge-routine">Routine</span>') + '</div><button class="timer-btn" onclick="startTaskTimer(' + t.id + ')" title="Timer">⏱️</button><button class="delete-btn" onclick="deleteTask(' + t.id + ')">🗑️</button></div>';
+        html += '<div class="task-item ' + completedClass + ' ' + typeClass + ' animate-in">' + row + photoHtml + '</div>';
+    }
+    container.innerHTML = html;
+}
+
+function addTaskPhoto(taskId, input) {
+    var files = input.files;
+    if(!files || !files.length) { return; }
+    var t = null;
+    for(var i = 0; i < tasks.length; i++) { if(tasks[i].id === taskId) { t = tasks[i]; break; } }
+    if(!t) return;
+    if(!t.photos) t.photos = [];
+    var pending = 0;
+    for(var i = 0; i < files.length; i++) {
+        if(!files[i].type.startsWith('image/')) continue;
+        pending++;
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            t.photos.push({id:'tp' + Date.now() + '_' + Math.floor(Math.random()*100000), data:e.target.result, timestamp:new Date().toISOString()});
+            pending--;
+            if(pending <= 0) { saveToStorage(); renderTasks(currentTaskFilter); showToast('📸 Photo added to task!'); }
+        };
+        reader.readAsDataURL(files[i]);
+    }
+    input.value = '';
+    if(pending === 0) showToast('No valid images selected');
+}
+
+function deleteTaskPhoto(taskId, photoId, e) {
+    if(e) e.stopPropagation();
+    if(!confirm('Delete this photo?')) return;
+    for(var i = 0; i < tasks.length; i++) {
+        if(tasks[i].id === taskId) {
+            var np = [];
+            var arr = tasks[i].photos || [];
+            for(var j = 0; j < arr.length; j++) { if(arr[j].id !== photoId) np.push(arr[j]); }
+            tasks[i].photos = np;
+            break;
+        }
+    }
+    saveToStorage();
+    renderTasks(currentTaskFilter);
+    showToast('Photo deleted');
+}
+
+function openTaskPhotoModal(taskId, idx) {
+    for(var i = 0; i < tasks.length; i++) {
+        if(tasks[i].id === taskId) { openPhotoModal(idx, tasks[i].photos || []); return; }
+    }
+}
+
+function startTaskTimer(id) {
+    for(var i = 0; i < tasks.length; i++) {
+        if(tasks[i].id === id) {
+            tasks[i].timer = tasks[i].timer || 0;
+            tasks[i].timer += 300;
+            saveToStorage();
+            renderTasks(currentTaskFilter);
+            showToast('⏱️ +5 min added');
+            break;
+        }
+    }
+}
+
+function formatTime(seconds) {
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    return m + ':' + s.toString().padStart(2, '0');
+}
+
+function handleTaskUpload(event) {
+    var file = event.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var lines = e.target.result.split('\n');
+        var added = 0;
+        for(var i = 0; i < lines.length; i++) {
+            var line = lines[i].trim();
+            if(!line) continue;
+            var parts = line.split(',');
+            var text = parts[0] || line;
+            tasks.push({id:Date.now() + i, text:text, completed:false, type:'special', photos:[], timer:null, created:new Date().toISOString()});
+            added++;
+        }
+        saveToStorage();
+        renderTasks(currentTaskFilter);
+        updateStats();
+        showToast('📁 ' + added + ' tasks imported!');
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+// ==================== SCHEDULE ====================
+function todayDayCode() { return DAY_CODES[new Date().getDay()]; }
+function todayISO() { return new Date().toISOString().split('T')[0]; }
+function schedMatchesToday(s) {
+    if(s.date) return s.date === todayISO();
+    return s.day === todayDayCode() || s.day === 'Daily';
+}
+
+function loadPdfJs() {
+    return new Promise(function(resolve, reject) {
+        if(window.pdfjsLib) { resolve(); return; }
+        var sc = document.createElement('script');
+        sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+        sc.onload = function() {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            resolve();
+        };
+        sc.onerror = function() { reject(new Error('could not load PDF reader (need internet)')); };
+        document.head.appendChild(sc);
+    });
+}
+
+function parseScheduleCalendar(text) {
+    var months = {january:1,february:2,march:3,april:4,may:5,june:6,july:7,august:8,september:9,october:10,november:11,december:12};
+    var despacedAll = text.toLowerCase().replace(/\s+/g, '');
+    var mY = despacedAll.match(/(january|february|march|april|may|june|july|august|september|october|november|december)(\d{4})/);
+    var month = mY ? months[mY[1]] : (new Date().getMonth() + 1);
+    var year = mY ? parseInt(mY[2]) : new Date().getFullYear();
+    var lines = text.split('\n');
+    var byDate = {}, currentDate = null, skip = false, gap = false;
+    for(var i = 0; i < lines.length; i++) {
+        var s = lines[i].trim();
+        if(!s) { gap = true; continue; }
+        var dp = s.replace(/\s+/g, '');
+        if(/^\d{1,2}$/.test(s) || /^\d{1,2}(\s+\d{1,2})+$/.test(s) || /^(\d{2})+$/.test(dp)) {
+            var pairs = dp.match(/\d{2}/g) || [dp];
+            currentDate = parseInt(pairs[pairs.length - 1]);
+            skip = false; gap = false;
+            continue;
+        }
+        if(/^[\-–•]/.test(s)) {
+            if(gap && currentDate != null && byDate[currentDate] && byDate[currentDate].length) skip = true;
+            gap = false;
+            if(!skip && currentDate != null && currentDate >= 1 && currentDate <= 31) {
+                var task = s.replace(/^[\-–•]\s*/, '').replace(/\s+/g, ' ').trim();
+                if(task) { (byDate[currentDate] = byDate[currentDate] || []).push(task); }
+            }
+            continue;
+        }
+        gap = false;
+    }
+    var entries = [], base = Date.now();
+    Object.keys(byDate).forEach(function(dn) {
+        var d = parseInt(dn);
+        var iso = year + '-' + String(month).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+        byDate[dn].forEach(function(task, idx) { entries.push({id:base + d * 100 + idx, date:iso, task:task}); });
+    });
+    entries.sort(function(a, b) { return a.date < b.date ? -1 : 1; });
+    var label = mY ? (mY[1].charAt(0).toUpperCase() + mY[1].slice(1) + ' ' + mY[2]) : 'schedule';
+    return {entries:entries, label:label, month:month, year:year};
+}
+
+function importSchedulePDF(event) {
+    var file = event.target.files[0];
+    event.target.value = '';
+    if(!file) return;
+    showToast('📄 Reading PDF...');
+    loadPdfJs().then(function() {
+        return file.arrayBuffer();
+    }).then(function(buf) {
+        return pdfjsLib.getDocument({data:buf}).promise;
+    }).then(function(pdf) {
+        var chain = Promise.resolve('');
+        for(var pn = 1; pn <= pdf.numPages; pn++) {
+            (function(p) {
+                chain = chain.then(function(acc) {
+                    return pdf.getPage(p).then(function(page) { return page.getTextContent(); }).then(function(tc) {
+                        var t = '';
+                        tc.items.forEach(function(it) { t += it.str + (it.hasEOL ? '\n' : ''); });
+                        return acc + t + '\n';
+                    });
+                });
+            })(pn);
+        }
+        return chain;
+    }).then(function(text) {
+        var parsed = parseScheduleCalendar(text);
+        if(!parsed.entries.length) { showToast('Could not read dates from this PDF — try the photo + manual entry'); return; }
+        schedule = schedule.filter(function(s) { return !s.date; }).concat(parsed.entries);
+        calMonth = parsed.month - 1;
+        calYear = parsed.year;
+        saveToStorage();
+        renderSchedule();
+        renderCalendar();
+        addTodaySchedule(true);
+        showToast('📄 Imported ' + parsed.entries.length + ' tasks for ' + parsed.label);
+    }).catch(function(err) {
+        showToast('PDF import failed: ' + err.message);
+    });
+}
+
+function handleScheduleImage(event) {
+    var file = event.target.files[0];
+    if(!file) return;
+    if(!file.type.startsWith('image/')) { showToast('Please choose an image'); return; }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        scheduleImage = e.target.result;
+        saveToStorage();
+        renderSchedule();
+        showToast('📅 Calendar photo saved');
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
+}
+
+function removeScheduleImage() {
+    if(!confirm('Remove the calendar photo?')) return;
+    scheduleImage = null;
+    saveToStorage();
+    renderSchedule();
+    showToast('Calendar photo removed');
+}
+
+function openScheduleImage() {
+    if(!scheduleImage) return;
+    openPhotoModal(0, [{data:scheduleImage, timestamp:new Date().toISOString()}]);
+}
+
+function addScheduleEntry() {
+    var day = document.getElementById('schedDay').value;
+    var task = document.getElementById('schedTask').value.trim();
+    if(!task) { showToast('Enter a task'); return; }
+    schedule.push({id:Date.now(), day:day, task:task});
+    document.getElementById('schedTask').value = '';
+    saveToStorage();
+    renderSchedule();
+    renderCalendar();
+    addTodaySchedule(true);
+    renderTasks(currentTaskFilter);
+    showToast('📅 Added to ' + DAY_FULL[day]);
+}
+
+function deleteScheduleEntry(id) {
+    schedule = schedule.filter(function(s) { return s.id !== id; });
+    saveToStorage();
+    renderSchedule();
+    renderCalendar();
+    renderTasks(currentTaskFilter);
+    showToast('Removed from schedule');
+}
+
+function clearImportedSchedule() {
+    if(!confirm('Clear all imported (dated) schedule tasks? Your manual weekly entries stay.')) return;
+    schedule = schedule.filter(function(s) { return !s.date; });
+    saveToStorage();
+    renderSchedule();
+    renderCalendar();
+    renderTasks(currentTaskFilter);
+    showToast('Imported schedule cleared');
+}
+
+function renderSchedule() {
+    var imgWrap = document.getElementById('scheduleImgWrap');
+    if(imgWrap) {
+        imgWrap.innerHTML = scheduleImage
+            ? '<img src="' + scheduleImage + '" class="sched-photo" onclick="openScheduleImage()"><button class="btn btn-sm btn-danger" style="margin-top:8px;" onclick="removeScheduleImage()">🗑️ Remove Photo</button>'
+            : '';
+    }
+    var container = document.getElementById('scheduleContent');
+    if(!schedule.length) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📆</div><div>No scheduled tasks yet.</div><div style="font-size:0.75rem;margin-top:8px;color:var(--text-muted);">Import a PDF schedule above, or add each day\'s tasks below.</div></div>';
+        return;
+    }
+    function itemRow(s) { return '<div class="sched-item"><span>' + escapeHtml(s.task) + '</span><button class="fl-mini-btn fl-mini-ghost" onclick="deleteScheduleEntry(' + s.id + ')">🗑️</button></div>'; }
+    var html = '';
+    // imported dated entries live on the Service Calendar only — just a pointer here
+    var datedCount = schedule.filter(function(s) { return s.date; }).length;
+    if(datedCount) {
+        html += '<div class="sched-note">📅 ' + datedCount + ' imported task(s) — view them on the <b>Service Calendar</b> below. <button class="btn btn-sm btn-ghost" onclick="clearImportedSchedule()">Clear imported</button></div>';
+    }
+    // weekday recurring entries (manual quick-add) still listed here
+    var order = ['Daily','Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    var todayCode = todayDayCode();
+    for(var d = 0; d < order.length; d++) {
+        var day = order[d];
+        var items = schedule.filter(function(s) { return !s.date && s.day === day; });
+        if(!items.length) continue;
+        var todayMark = (day === todayCode || day === 'Daily') ? ' <span class="fl-badge active">today</span>' : '';
+        html += '<div class="sched-day"><div class="sched-day-head">' + DAY_FULL[day] + ' (weekly)' + todayMark + '</div>';
+        for(var i = 0; i < items.length; i++) { html += itemRow(items[i]); }
+        html += '</div>';
+    }
+    container.innerHTML = html;
+}
+
+function buildTodayScheduleHtml() {
+    if(!schedule.length) return '';
+    var today = todayDayCode();
+    var items = schedule.filter(schedMatchesToday);
+    if(!items.length) return '';
+    var dateStr = todayISO();
+    var pending = 0;
+    var h = '<div class="fl-routine-card" style="border-color:var(--warning);background:linear-gradient(135deg,#fef3c7,transparent);"><div class="fl-routine-head">📅 Today\'s Schedule — ' + DAY_FULL[today] + ' <small>' + items.length + ' task(s)</small></div>';
+    for(var i = 0; i < items.length; i++) {
+        var key = dateStr + '|' + items[i].id;
+        var added = tasks.some(function(t) { return t.schedKey === key; });
+        if(!added) pending++;
+        h += '<div class="fl-unit"><div class="fl-unit-loc">' + escapeHtml(items[i].task) + (added ? ' <span class="fl-badge active">added</span>' : '') + '</div></div>';
+    }
+    if(pending) h += '<button class="btn btn-sm btn-primary" style="margin-top:8px;width:100%;" onclick="addTodaySchedule()">➕ Add ' + pending + ' to my tasks</button>';
+    else h += '<div style="text-align:center;padding:6px;color:#065f46;font-weight:700;">✅ All added to today\'s tasks</div>';
+    h += '</div>';
+    return h;
+}
+
+function addTodaySchedule(silent) {
+    var dateStr = todayISO();
+    var items = schedule.filter(schedMatchesToday);
+    var added = 0;
+    for(var i = 0; i < items.length; i++) {
+        var key = dateStr + '|' + items[i].id;
+        var exists = tasks.some(function(t) { return t.schedKey === key; });
+        if(exists) continue;
+        tasks.push({id:Date.now() + i, text:items[i].task, completed:false, type:'routine', photos:[], timer:null, created:new Date().toISOString(), schedKey:key});
+        added++;
+    }
+    saveToStorage();
+    renderTasks(currentTaskFilter);
+    updateStats();
+    if(!silent) showToast(added ? ('➕ Added ' + added + ' task(s)') : 'Already added today');
+    return added;
+}
+
+// ==================== CALENDAR ====================
+function scheduleEntriesForDate(iso) {
+    var dt = new Date(iso + 'T00:00:00');
+    var dc = DAY_CODES[dt.getDay()];
+    return schedule.filter(function(s) { return s.date ? s.date === iso : (s.day === dc || s.day === 'Daily'); });
+}
+
+function tasksForDate(iso) {
+    return scheduleEntriesForDate(iso).map(function(s) { return s.task; });
+}
+
+function renderCalendar() {
+    var grid = document.getElementById('calGrid');
+    if(!grid) return;
+    var label = document.getElementById('calLabel');
+    var first = new Date(calYear, calMonth, 1);
+    var startDow = first.getDay();
+    var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    if(label) label.textContent = first.toLocaleDateString('en-US', {month:'long', year:'numeric'});
+    var tIso = todayISO();
+    var cells = '';
+    for(var i = 0; i < startDow; i++) cells += '<div class="cal-cell empty"></div>';
+    for(var d = 1; d <= daysInMonth; d++) {
+        var iso = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+        var t = tasksForDate(iso);
+        var cls = 'cal-cell' + (t.length ? ' has-tasks' : '') + (iso === tIso ? ' today' : '') + (iso === selectedDate ? ' selected' : '');
+        var taskLines = '';
+        if(t.length) {
+            var maxShow = 3;
+            taskLines = '<div class="cal-tasks">';
+            for(var ti = 0; ti < Math.min(t.length, maxShow); ti++) taskLines += '<div class="cal-task" title="' + escAttr(t[ti]) + '">' + escapeHtml(t[ti]) + '</div>';
+            if(t.length > maxShow) taskLines += '<div class="cal-task more">+' + (t.length - maxShow) + ' more</div>';
+            taskLines += '</div>';
+        }
+        cells += '<div class="' + cls + '" onclick="selectCalDate(\'' + iso + '\')"><div class="cal-num">' + d + '</div>' + taskLines + '</div>';
+    }
+    grid.innerHTML = '<div class="cal-dow"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div class="cal-days">' + cells + '</div>';
+    renderCalDetail();
+}
+
+var DAY_START_HOUR = 5, DAY_END_HOUR = 23;
+
+function fmtHour(hr) {
+    var ap = hr < 12 ? 'AM' : 'PM';
+    var h12 = hr % 12; if(h12 === 0) h12 = 12;
+    return h12 + ' ' + ap;
+}
+function fmtTime(t) {
+    if(!t) return '';
+    var p = t.split(':'); var hr = parseInt(p[0]);
+    var ap = hr < 12 ? 'AM' : 'PM';
+    var h12 = hr % 12; if(h12 === 0) h12 = 12;
+    return h12 + ':' + p[1] + ' ' + ap;
+}
+
+function renderCalDetail() {
+    var el = document.getElementById('calDayDetail');
+    if(!el) return;
+    if(!selectedDate) { el.innerHTML = ''; return; }
+    var entries = scheduleEntriesForDate(selectedDate);
+    var lbl = new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+    var h = '<div class="cal-day-detail"><div class="cal-day-title">' + lbl + (selectedDate === todayISO() ? ' <span class="fl-badge active">today</span>' : '') + '</div>';
+    if(!entries.length) { h += '<div style="color:var(--text-muted);">No tasks scheduled.</div></div>'; el.innerHTML = h; return; }
+
+    var unsched = entries.filter(function(e) { return !e.time; });
+    var timed = entries.filter(function(e) { return e.time; });
+
+    if(unsched.length) {
+        h += '<div class="day-section-label">⏳ Unscheduled — set a time</div>';
+        unsched.forEach(function(e) {
+            h += '<div class="day-task"><span class="day-task-text">' + escapeHtml(e.task) + '</span><input type="time" class="day-time-input" onchange="setTaskTime(' + e.id + ', this.value)"><button class="fl-mini-btn fl-mini-ghost" onclick="deleteScheduleEntry(' + e.id + ')" title="Delete">🗑️</button></div>';
+        });
+    }
+
+    h += '<div class="day-section-label">🕐 Day plan</div><div class="day-timeline">';
+    for(var hr = DAY_START_HOUR; hr <= DAY_END_HOUR; hr++) {
+        var hrTasks = timed.filter(function(e) { return parseInt(e.time.split(':')[0]) === hr; });
+        hrTasks.sort(function(a, b) { return a.time < b.time ? -1 : 1; });
+        h += '<div class="day-hour"><div class="day-hour-label">' + fmtHour(hr) + '</div><div class="day-hour-slot">';
+        hrTasks.forEach(function(e) {
+            h += '<div class="day-task scheduled"><span class="day-task-time">' + fmtTime(e.time) + '</span><span class="day-task-text">' + escapeHtml(e.task) + '</span><input type="time" class="day-time-input" value="' + e.time + '" onchange="setTaskTime(' + e.id + ', this.value)"><button class="fl-mini-btn fl-mini-ghost" onclick="clearTaskTime(' + e.id + ')" title="Unschedule">✕</button></div>';
+        });
+        h += '</div></div>';
+    }
+    h += '</div>';
+
+    var outside = timed.filter(function(e) { var hh = parseInt(e.time.split(':')[0]); return hh < DAY_START_HOUR || hh > DAY_END_HOUR; });
+    if(outside.length) {
+        h += '<div class="day-section-label">Other times</div>';
+        outside.sort(function(a, b) { return a.time < b.time ? -1 : 1; });
+        outside.forEach(function(e) {
+            h += '<div class="day-task scheduled"><span class="day-task-time">' + fmtTime(e.time) + '</span><span class="day-task-text">' + escapeHtml(e.task) + '</span><button class="fl-mini-btn fl-mini-ghost" onclick="clearTaskTime(' + e.id + ')" title="Unschedule">✕</button></div>';
+        });
+    }
+
+    if(selectedDate === todayISO()) h += '<button class="btn btn-sm btn-primary" style="margin-top:10px;" onclick="addTodaySchedule()">➕ Add today to my tasks</button>';
+    h += '</div>';
+    el.innerHTML = h;
+}
+
+function setTaskTime(id, value) {
+    if(!value) return;
+    for(var i = 0; i < schedule.length; i++) { if(schedule[i].id === id) { schedule[i].time = value; break; } }
+    saveToStorage();
+    renderCalendar();
+    requestNotifyPermission();
+    scheduleReminders();
+    showToast('⏰ Reminder set for ' + fmtTime(value));
+}
+
+function clearTaskTime(id) {
+    for(var i = 0; i < schedule.length; i++) { if(schedule[i].id === id) { delete schedule[i].time; break; } }
+    saveToStorage();
+    renderCalendar();
+    scheduleReminders();
+    showToast('Time cleared');
+}
+
+var reminderTimers = [];
+function requestNotifyPermission() {
+    if('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+}
+function scheduleReminders() {
+    reminderTimers.forEach(clearTimeout);
+    reminderTimers = [];
+    if(!('Notification' in window) || Notification.permission !== 'granted') return;
+    var now = Date.now();
+    scheduleEntriesForDate(todayISO()).forEach(function(e) {
+        if(!e.time) return;
+        var p = e.time.split(':');
+        var when = new Date(); when.setHours(parseInt(p[0]), parseInt(p[1]), 0, 0);
+        var delay = when.getTime() - now;
+        if(delay > 0 && delay < 24 * 3600 * 1000) {
+            reminderTimers.push(setTimeout(function() {
+                try { new Notification('Pest Tech Pro', {body: fmtTime(e.time) + ' — ' + e.task}); } catch(err) {}
+                showToast('⏰ ' + fmtTime(e.time) + ' — ' + e.task);
+            }, delay));
+        }
+    });
+}
+
+function selectCalDate(iso) {
+    selectedDate = (selectedDate === iso) ? null : iso;
+    renderCalendar();
+}
+
+function calPrev() { calMonth--; if(calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); }
+function calNext() { calMonth++; if(calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); }
+
+// ==================== MESSAGES ====================
+function generateDailyMessage() {
+    var now = new Date();
+    var completed = 0, pending = 0, special = 0, taskPhotos = 0;
+    for(var i = 0; i < tasks.length; i++) {
+        if(tasks[i].completed) completed++;
+        else pending++;
+        if(tasks[i].type === 'special') special++;
+        taskPhotos += (tasks[i].photos || []).length;
+    }
+    var msg = 'DAILY WORK UPDATE - ' + now.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'}) + '\n\n';
+    msg += 'Tasks Completed: ' + completed + '/' + tasks.length + '\n';
+    msg += 'Remaining: ' + pending + '\n';
+    msg += 'Special Requests: ' + special + '\n';
+    msg += 'Photos Taken: ' + (photos.length + taskPhotos) + '\n';
+    var flDoneWk = 0;
+    for(var k = 0; k < flyLights.length; k++) { if(flCheckedThisWeek(flyLights[k])) flDoneWk++; }
+    msg += 'Fly Lights Checked (this week): ' + flDoneWk + '/' + flyLights.length + '\n\n';
+    if(pending > 0) {
+        msg += 'PENDING TASKS:\n';
+        for(var i = 0; i < tasks.length; i++) {
+            if(!tasks[i].completed) msg += '• ' + tasks[i].text + ((tasks[i].photos || []).length ? ' (' + tasks[i].photos.length + ' 📷)' : '') + '\n';
+        }
+    }
+    document.getElementById('messageBox').textContent = msg;
+    showToast('📤 Daily update generated!');
+}
+
+function generateCompletionMessage() {
+    var completed = [];
+    for(var i = 0; i < tasks.length; i++) { if(tasks[i].completed) completed.push(tasks[i]); }
+    var msg = 'WORK COMPLETION REPORT\n\n';
+    msg += 'Completed ' + completed.length + ' tasks today.\n\n';
+    for(var i = 0; i < completed.length; i++) msg += '✅ ' + completed[i].text + ((completed[i].photos || []).length ? ' (' + completed[i].photos.length + ' 📷)' : '') + '\n';
+    document.getElementById('messageBox').textContent = msg;
+    showToast('✅ Completion report generated!');
+}
+
+function generatePhotoReport() {
+    var taskPhotos = 0;
+    for(var i = 0; i < tasks.length; i++) taskPhotos += (tasks[i].photos || []).length;
+    var msg = 'PHOTO REPORT\n\n';
+    msg += 'Job Site Photos: ' + photos.length + '\n';
+    msg += 'Task Photos: ' + taskPhotos + '\n\n';
+    for(var i = 0; i < photos.length; i++) {
+        msg += '📸 Photo ' + (i+1) + ' — ' + new Date(photos[i].timestamp).toLocaleString() + '\n';
+    }
+    for(var i = 0; i < tasks.length; i++) {
+        var tp = tasks[i].photos || [];
+        if(tp.length) msg += '📋 ' + tasks[i].text + ' — ' + tp.length + ' photo(s)\n';
+    }
+    document.getElementById('messageBox').textContent = msg;
+    showToast('📸 Photo report generated!');
+}
+
+function copyMessage() {
+    var msg = document.getElementById('messageBox').textContent;
+    navigator.clipboard.writeText(msg).then(function() {
+        showToast('📋 Copied to clipboard!');
+    }).catch(function() {
+        showToast('Copy failed — select and copy manually');
+    });
+}
+
+// ==================== PHOTOS ====================
+function handlePhotoFileSelect(event) {
+    var files = event.target.files;
+    if(!files || !files.length) return;
+    for(var i = 0; i < files.length; i++) {
+        var file = files[i];
+        if(!file.type.startsWith('image/')) continue;
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            photos.push({id:Date.now(), data:e.target.result, timestamp:new Date().toISOString()});
+            saveToStorage();
+            renderPhotos();
+            updateStats();
+        };
+        reader.readAsDataURL(file);
+    }
+    event.target.value = '';
+    showToast('📸 Photo added!');
+}
+
+function renderPhotos() {
+    var container = document.getElementById('photoGallery');
+    document.getElementById('photoCount').textContent = photos.length + ' photos';
+    if(!photos.length) {
+        container.innerHTML = '';
+        return;
+    }
+    var html = '';
+    for(var i = 0; i < photos.length; i++) {
+        html += '<div class="photo-gallery-item animate-in"><img src="' + photos[i].data + '" onclick="openPhotoModal(' + i + ')"><button class="photo-delete" onclick="deletePhoto(' + photos[i].id + ', event)">✕</button></div>';
+    }
+    container.innerHTML = html;
+}
+
+function openPhotoModal(index, set) {
+    modalPhotoSet = set || photos;
+    if(!modalPhotoSet.length) return;
+    currentPhotoIndex = index;
+    var modal = document.getElementById('photoModal');
+    var img = document.getElementById('modalImage');
+    var info = document.getElementById('modalInfo');
+    img.src = modalPhotoSet[index].data;
+    info.textContent = 'Photo ' + (index + 1) + ' of ' + modalPhotoSet.length + ' — ' + new Date(modalPhotoSet[index].timestamp).toLocaleString();
+    modal.classList.add('active');
+}
+
+function closePhotoModal(e) {
+    if(e && e.target !== document.getElementById('photoModal')) return;
+    document.getElementById('photoModal').classList.remove('active');
+}
+
+function navigatePhoto(dir) {
+    if(!modalPhotoSet.length) return;
+    currentPhotoIndex += dir;
+    if(currentPhotoIndex < 0) currentPhotoIndex = modalPhotoSet.length - 1;
+    if(currentPhotoIndex >= modalPhotoSet.length) currentPhotoIndex = 0;
+    openPhotoModal(currentPhotoIndex, modalPhotoSet);
+}
+
+function deletePhoto(id, e) {
+    if(e) e.stopPropagation();
+    if(!confirm('Delete this photo?')) return;
+    var newPhotos = [];
+    for(var i = 0; i < photos.length; i++) { if(photos[i].id !== id) newPhotos.push(photos[i]); }
+    photos = newPhotos;
+    saveToStorage();
+    renderPhotos();
+    updateStats();
+    showToast('Photo deleted');
+}
+
+function setupDragDrop() {
+    var area = document.getElementById('photoUploadArea');
+    ['dragenter','dragover','dragleave','drop'].forEach(function(event) {
+        area.addEventListener(event, function(e) { e.preventDefault(); e.stopPropagation(); });
+    });
+    area.addEventListener('dragenter', function() { area.classList.add('dragover'); });
+    area.addEventListener('dragleave', function() { area.classList.remove('dragover'); });
+    area.addEventListener('drop', function(e) {
+        area.classList.remove('dragover');
+        var files = e.dataTransfer.files;
+        for(var i = 0; i < files.length; i++) {
+            if(!files[i].type.startsWith('image/')) continue;
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                photos.push({id:Date.now(), data:ev.target.result, timestamp:new Date().toISOString()});
+                saveToStorage();
+                renderPhotos();
+                updateStats();
+            };
+            reader.readAsDataURL(files[i]);
+        }
+        showToast('📸 Photos dropped!');
+    });
+
+    var sArea = document.getElementById('scheduleImgArea');
+    if(sArea) {
+        ['dragenter','dragover','dragleave','drop'].forEach(function(event) {
+            sArea.addEventListener(event, function(e) { e.preventDefault(); e.stopPropagation(); });
+        });
+        sArea.addEventListener('dragenter', function() { sArea.classList.add('dragover'); });
+        sArea.addEventListener('dragleave', function() { sArea.classList.remove('dragover'); });
+        sArea.addEventListener('drop', function(e) {
+            sArea.classList.remove('dragover');
+            var files = e.dataTransfer.files;
+            if(!files || !files.length || !files[0].type.startsWith('image/')) { showToast('Drop an image'); return; }
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                scheduleImage = ev.target.result;
+                saveToStorage();
+                renderSchedule();
+                showToast('📅 Calendar photo saved');
+            };
+            reader.readAsDataURL(files[0]);
+        });
+    }
+}
+
+// ==================== FLY LIGHTS ====================
+function flWeekKey(d) {
+    var x = new Date(d);
+    var day = (x.getDay() + 6) % 7; // Monday = 0
+    x.setHours(0,0,0,0);
+    x.setDate(x.getDate() - day);
+    return x.toISOString().split('T')[0];
+}
+function flCheckedThisWeek(f) { return f.lastCheckedISO && flWeekKey(f.lastCheckedISO) === flWeekKey(new Date()); }
+function flCheckedToday(f) { return f.lastCheckedISO && f.lastCheckedISO.split('T')[0] === new Date().toISOString().split('T')[0]; }
+function flDue() {
+    return flyLights.filter(function(f) { return !flCheckedThisWeek(f); }).sort(function(a,b) { return a.num - b.num; });
+}
+
+function seedFlyLights(force) {
+    if(flyLights.length && !force) return;
+    if(force && !confirm('Reload the 44 Princess units? This replaces the current fly light list.')) return;
+    flyLights = flySeedData();
+    saveToStorage();
+    renderFlyLights();
+    renderTasks(currentTaskFilter);
+    if(force) showToast('↺ Loaded 44 units');
+}
+
+function addFlyLight() {
+    var loc = document.getElementById('flyLightLoc').value.trim();
+    if(!loc) { showToast('Enter a location'); return; }
+    var maxNum = 0;
+    for(var i = 0; i < flyLights.length; i++) { if(flyLights[i].num > maxNum) maxNum = flyLights[i].num; }
+    flyLights.push({id:'fl' + Date.now(), num:maxNum + 1, location:loc, status:'Active', inactiveReason:'', check:'Clear', lastCheckedISO:null, notes:'', lastUpdated:new Date().toISOString()});
+    document.getElementById('flyLightLoc').value = '';
+    saveToStorage();
+    renderFlyLights();
+    renderTasks(currentTaskFilter);
+    showToast('💡 Unit added');
+}
+
+function markFlyChecked(id) {
+    for(var i = 0; i < flyLights.length; i++) {
+        if(flyLights[i].id === id) {
+            flyLights[i].lastCheckedISO = new Date().toISOString();
+            flyLights[i].lastUpdated = flyLights[i].lastCheckedISO;
+            if(flyLights[i].status === 'Active') flyLights[i].check = 'Clear';
+            break;
+        }
+    }
+    saveToStorage();
+    renderFlyLights();
+    renderTasks(currentTaskFilter);
+    showToast('✓ Unit checked');
+}
+
+function flagFlyIssue(id) {
+    var reason = prompt('What is the issue? (e.g., Blown bulb, No power, Needs cleaning)');
+    if(reason === null) return;
+    for(var i = 0; i < flyLights.length; i++) {
+        if(flyLights[i].id === id) {
+            var f = flyLights[i];
+            f.status = 'Inactive';
+            f.inactiveReason = reason || 'Issue';
+            f.check = 'Pending';
+            f.lastCheckedISO = new Date().toISOString();
+            f.lastUpdated = f.lastCheckedISO;
+            break;
+        }
+    }
+    saveToStorage();
+    renderFlyLights();
+    renderTasks(currentTaskFilter);
+    showToast('⚠ Issue logged');
+}
+
+function editFlyUnit(id) {
+    flEditId = id;
+    renderFlyLights();
+    var el = document.getElementById('flEdit-loc');
+    if(el) el.focus();
+}
+
+function cancelFlyEdit() {
+    flEditId = null;
+    renderFlyLights();
+}
+
+function saveFlyEdit(id) {
+    var loc = document.getElementById('flEdit-loc').value.trim();
+    var status = document.getElementById('flEdit-status').value;
+    var reason = document.getElementById('flEdit-reason').value.trim();
+    var notes = document.getElementById('flEdit-notes').value.trim();
+    for(var i = 0; i < flyLights.length; i++) {
+        if(flyLights[i].id === id) {
+            var f = flyLights[i];
+            f.location = loc;
+            f.status = status;
+            if(status === 'Inactive') {
+                f.inactiveReason = reason || 'Unspecified';
+                f.check = 'Pending';
+            } else {
+                f.inactiveReason = '';
+                f.check = 'Clear';
+            }
+            f.notes = notes;
+            f.lastUpdated = new Date().toISOString();
+            break;
+        }
+    }
+    flEditId = null;
+    saveToStorage();
+    renderFlyLights();
+    renderTasks(currentTaskFilter);
+    showToast('💾 Unit updated');
+}
+
+function flEditFormHtml(f) {
+    return '<div class="fl-unit fl-edit-form"><div class="fl-edit-title">✎ Editing Unit #' + f.num + '</div>' +
+        '<div class="fl-edit-row"><label>Location</label><input type="text" class="input-field" id="flEdit-loc" value="' + escAttr(f.location) + '" placeholder="Location"></div>' +
+        '<div class="fl-edit-row"><label>Status</label><select class="input-field" id="flEdit-status" onchange="document.getElementById(\'flEdit-reasonRow\').style.display=(this.value===\'Inactive\'?\'block\':\'none\')"><option value="Active"' + (f.status === 'Active' ? ' selected' : '') + '>Active</option><option value="Inactive"' + (f.status === 'Inactive' ? ' selected' : '') + '>Inactive</option></select></div>' +
+        '<div class="fl-edit-row" id="flEdit-reasonRow" style="' + (f.status === 'Inactive' ? '' : 'display:none') + '"><label>Inactive reason</label><input type="text" class="input-field" id="flEdit-reason" value="' + escAttr(f.inactiveReason) + '" placeholder="e.g., Blown bulb, No power, Electricity"></div>' +
+        '<div class="fl-edit-row"><label>Notes</label><input type="text" class="input-field" id="flEdit-notes" value="' + escAttr(f.notes) + '" placeholder="Optional notes"></div>' +
+        '<div style="display:flex;gap:8px;margin-top:4px;"><button class="btn btn-sm btn-primary" onclick="saveFlyEdit(\'' + f.id + '\')">💾 Save</button><button class="btn btn-sm btn-ghost" onclick="cancelFlyEdit()">Cancel</button></div></div>';
+}
+
+function deleteFlyLight(id) {
+    if(!confirm('Delete this unit?')) return;
+    var newLights = [];
+    for(var i = 0; i < flyLights.length; i++) { if(flyLights[i].id !== id) newLights.push(flyLights[i]); }
+    flyLights = newLights;
+    saveToStorage();
+    renderFlyLights();
+    renderTasks(currentTaskFilter);
+    showToast('Unit deleted');
+}
+
+function resetFlyWeek() {
+    if(!confirm('Start a new week? This clears all "checked this week" marks so all units become due again.')) return;
+    for(var i = 0; i < flyLights.length; i++) flyLights[i].lastCheckedISO = null;
+    saveToStorage();
+    renderFlyLights();
+    renderTasks(currentTaskFilter);
+    showToast('🔄 New week started');
+}
+
+function importFlyLightsCSV(event) {
+    var file = event.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var lines = e.target.result.split('\n');
+        var out = [];
+        for(var i = 0; i < lines.length; i++) {
+            var line = lines[i].trim();
+            if(!line) continue;
+            var p = line.split(',');
+            var first = (p[0] || '').trim();
+            if(!/^\d+$/.test(first)) continue; // skip title/header/summary rows
+            var n = parseInt(first);
+            var status = /inactive/i.test(p[2] || '') ? 'Inactive' : 'Active';
+            out.push({id:'fl' + n + '_' + Date.now(), num:n, location:(p[1] || '').trim(), status:status, inactiveReason:(p[3] || '').trim(), check:/pending/i.test(p[4] || '') ? 'Pending' : 'Clear', lastCheckedISO:null, notes:(p[7] || '').trim(), lastUpdated:new Date().toISOString()});
+        }
+        if(!out.length) { showToast('No valid rows found (need #, Location, Status... columns)'); return; }
+        out.sort(function(a,b) { return a.num - b.num; });
+        flyLights = out;
+        saveToStorage();
+        renderFlyLights();
+        renderTasks(currentTaskFilter);
+        showToast('📁 Imported ' + out.length + ' units');
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+function flSummaryHtml() {
+    var total = flyLights.length, active = 0, inactive = 0, doneWk = 0;
+    for(var i = 0; i < flyLights.length; i++) {
+        if(flyLights[i].status === 'Inactive') inactive++; else active++;
+        if(flCheckedThisWeek(flyLights[i])) doneWk++;
+    }
+    return '<div class="fl-stat"><div class="fl-stat-num">' + total + '</div><div class="fl-stat-lbl">Total</div></div>' +
+        '<div class="fl-stat ok"><div class="fl-stat-num">' + active + '</div><div class="fl-stat-lbl">Active</div></div>' +
+        '<div class="fl-stat bad"><div class="fl-stat-num">' + inactive + '</div><div class="fl-stat-lbl">Inactive</div></div>' +
+        '<div class="fl-stat ok"><div class="fl-stat-num">' + doneWk + '</div><div class="fl-stat-lbl">Done/wk</div></div>' +
+        '<div class="fl-stat warn"><div class="fl-stat-num">' + (total - doneWk) + '</div><div class="fl-stat-lbl">Due</div></div>';
+}
+
+function buildFlyRoutineHtml() {
+    if(!flyLights.length) return '';
+    var due = flDue();
+    var todays = due.slice(0, 10);
+    var total = flyLights.length;
+    var doneWk = total - due.length;
+    var doneToday = 0;
+    for(var i = 0; i < flyLights.length; i++) { if(flCheckedToday(flyLights[i])) doneToday++; }
+    var pct = total ? Math.round(doneWk / total * 100) : 0;
+    var dow = new Date().getDay();
+    if(dow === 0 || dow === 6) {
+        return '<div class="fl-routine-card"><div class="fl-routine-head">🔦 Fly Lights <small>' + doneWk + '/' + total + ' this week</small></div><div style="text-align:center;padding:8px;color:var(--text-muted);">Weekend — inspections run Mon–Fri, resume Monday.</div></div>';
+    }
+    var h = '<div class="fl-routine-card"><div class="fl-routine-head">🔦 Fly Light Route — Today <small>' + doneToday + ' done today · ' + doneWk + '/' + total + ' this week</small></div>';
+    h += '<div class="fl-progress"><div class="fl-progress-bar" style="width:' + pct + '%"></div></div>';
+    if(!todays.length) {
+        h += '<div style="text-align:center;padding:10px;color:#065f46;font-weight:700;">✅ All ' + total + ' units checked this week!</div>';
+    } else {
+        for(var i = 0; i < todays.length; i++) {
+            var f = todays[i];
+            var badge = f.status === 'Inactive' ? '<span class="fl-badge inactive">Inactive</span>' : '<span class="fl-badge active">Active</span>';
+            var sub = (f.status === 'Inactive' && f.inactiveReason) ? '<div class="fl-unit-sub">⚠ ' + escapeHtml(f.inactiveReason) + '</div>' : '';
+            h += '<div class="fl-unit"><span class="fl-unit-num">#' + f.num + '</span><div class="fl-unit-loc">' + escapeHtml(f.location || '—') + ' ' + badge + sub + '</div><div class="fl-unit-actions"><button class="fl-mini-btn fl-mini-ok" onclick="markFlyChecked(\'' + f.id + '\')">✓</button><button class="fl-mini-btn fl-mini-warn" onclick="flagFlyIssue(\'' + f.id + '\')">⚠</button></div></div>';
+        }
+    }
+    h += '<button class="btn btn-sm btn-ghost" style="margin-top:8px;width:100%;" onclick="switchSection(\'flylights\')">Open full Fly Light list →</button></div>';
+    return h;
+}
+
+function flyListHtml() {
+    if(!flyLights.length) return '<div class="empty-state"><div class="empty-state-icon">💡</div><div>No fly lights yet. Add a unit or tap "Reload 44".</div></div>';
+    var sorted = flyLights.slice().sort(function(a,b) { return a.num - b.num; });
+    var h = '';
+    for(var i = 0; i < sorted.length; i++) {
+        var f = sorted[i];
+        if(flEditId === f.id) { h += flEditFormHtml(f); continue; }
+        var done = flCheckedThisWeek(f);
+        var cls = 'fl-unit animate-in' + (f.status === 'Inactive' ? ' inactive' : '') + (done ? ' done' : '');
+        var badge = f.status === 'Inactive' ? '<span class="fl-badge inactive">Inactive</span>' : '<span class="fl-badge active">Active</span>';
+        var chk = f.check === 'Pending' ? ' <span class="fl-badge pending">Pending</span>' : '';
+        var subs = [];
+        if(f.status === 'Inactive' && f.inactiveReason) subs.push('⚠ ' + escapeHtml(f.inactiveReason));
+        if(done) subs.push('✓ checked ' + new Date(f.lastCheckedISO).toLocaleDateString());
+        if(f.notes) subs.push('📝 ' + escapeHtml(f.notes));
+        var sub = subs.length ? '<div class="fl-unit-sub">' + subs.join(' · ') + '</div>' : '';
+        h += '<div class="' + cls + '"><span class="fl-unit-num">#' + f.num + '</span><div class="fl-unit-loc">' + escapeHtml(f.location || '—') + ' ' + badge + chk + sub + '</div><div class="fl-unit-actions">';
+        h += '<button class="fl-mini-btn fl-mini-ok" onclick="markFlyChecked(\'' + f.id + '\')" title="Mark checked / clear">✓</button>';
+        h += '<button class="fl-mini-btn fl-mini-ghost" onclick="editFlyUnit(\'' + f.id + '\')" title="Edit status / reason / notes">✎</button>';
+        h += '<button class="fl-mini-btn fl-mini-ghost" onclick="deleteFlyLight(\'' + f.id + '\')" title="Delete">🗑️</button>';
+        h += '</div></div>';
+    }
+    return h;
+}
+
+function renderFlyLights() {
+    var sum = document.getElementById('flSummary');
+    var route = document.getElementById('flRoutePanel');
+    var list = document.getElementById('flyLightList');
+    if(sum) sum.innerHTML = flyLights.length ? flSummaryHtml() : '';
+    if(route) route.innerHTML = buildFlyRoutineHtml();
+    if(list) list.innerHTML = flyListHtml();
+}
+
+// ==================== INVENTORY ====================
+function addInventoryLocation() {
+    var name = document.getElementById('newLocationName').value.trim();
+    if(!name) { showToast('Enter a location name'); return; }
+    if(!inventory[name]) inventory[name] = [];
+    document.getElementById('newLocationName').value = '';
+    saveToStorage();
+    renderInventory();
+    showToast('📦 Location added!');
+}
+
+function addInventoryItem(location) {
+    var name = prompt('Item name?');
+    if(!name) return;
+    var qty = parseInt(prompt('Quantity?')) || 0;
+    inventory[location].push({id:Date.now(), name:name, quantity:qty});
+    saveToStorage();
+    renderInventory();
+    showToast('Item added!');
+}
+
+function updateQty(location, itemId, delta) {
+    var items = inventory[location];
+    for(var i = 0; i < items.length; i++) {
+        if(items[i].id === itemId) {
+            items[i].quantity = Math.max(0, items[i].quantity + delta);
+            break;
+        }
+    }
+    saveToStorage();
+    renderInventory();
+}
+
+function deleteInventoryItem(location, itemId) {
+    var newItems = [];
+    for(var i = 0; i < inventory[location].length; i++) {
+        if(inventory[location][i].id !== itemId) newItems.push(inventory[location][i]);
+    }
+    inventory[location] = newItems;
+    saveToStorage();
+    renderInventory();
+    showToast('Item deleted');
+}
+
+function deleteInventoryLocation(location) {
+    if(!confirm('Delete "' + location + '" and all its items?')) return;
+    delete inventory[location];
+    saveToStorage();
+    renderInventory();
+    showToast('Location deleted');
+}
+
+function renderInventory() {
+    var container = document.getElementById('inventoryContainer');
+    var locs = Object.keys(inventory);
+    if(!locs.length) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📦</div><div>No inventory locations yet. Add your first location above.</div></div>';
+        return;
+    }
+    var html = '';
+    for(var i = 0; i < locs.length; i++) {
+        var items = inventory[locs[i]];
+        html += '<div class="inventory-location animate-in"><div class="inventory-location-header"><div class="inventory-location-title">📍 ' + escapeHtml(locs[i]) + '</div><button class="btn btn-sm btn-danger" onclick="deleteInventoryLocation(\'' + locs[i] + '\')">Delete</button></div>';
+        if(!items.length) {
+            html += '<div style="color:var(--text-muted);font-size:0.9rem;padding:8px;">No items yet.</div>';
+        } else {
+            for(var j = 0; j < items.length; j++) {
+                html += '<div class="inventory-item"><span class="inventory-item-name">' + escapeHtml(items[j].name) + '</span><div class="inventory-item-qty"><button class="qty-btn minus" onclick="updateQty(\'' + locs[i] + '\', ' + items[j].id + ', -1)">−</button><span class="qty-value">' + items[j].quantity + '</span><button class="qty-btn" onclick="updateQty(\'' + locs[i] + '\', ' + items[j].id + ', 1)">+</button><button class="delete-btn" style="opacity:1;margin-left:8px;" onclick="deleteInventoryItem(\'' + locs[i] + '\', ' + items[j].id + ')">🗑️</button></div></div>';
+            }
+        }
+        html += '<div class="inventory-add-form"><input type="text" class="input-field" placeholder="Item name" id="inv-item-' + i + '"><input type="number" class="input-field" placeholder="Qty" id="inv-qty-' + i + '" style="width:80px;"><button class="btn btn-secondary" onclick="addInventoryItemFromForm(\'' + locs[i] + '\', ' + i + ')">Add Item</button></div></div>';
+    }
+    container.innerHTML = html;
+}
+
+function addInventoryItemFromForm(location, index) {
+    var name = document.getElementById('inv-item-' + index).value.trim();
+    var qty = parseInt(document.getElementById('inv-qty-' + index).value) || 0;
+    if(!name) { showToast('Enter item name'); return; }
+    inventory[location].push({id:Date.now(), name:name, quantity:qty});
+    saveToStorage();
+    renderInventory();
+    showToast('Item added!');
+}
+
+// ==================== TOOLS ====================
+function addTool() {
+    var name = document.getElementById('toolName').value.trim();
+    var value = document.getElementById('toolValue').value.trim();
+    var use = document.getElementById('toolUse').value.trim();
+    if(!name) { showToast('Enter tool name'); return; }
+    tools.push({id:Date.now(), name:name, value:value||'0', use:use||''});
+    document.getElementById('toolName').value = '';
+    document.getElementById('toolValue').value = '';
+    document.getElementById('toolUse').value = '';
+    saveToStorage();
+    renderTools();
+    updateStats();
+    showToast('🧰 Tool added!');
+}
+
+function deleteTool(id) {
+    if(!confirm('Delete this tool?')) return;
+    var newTools = [];
+    for(var i = 0; i < tools.length; i++) { if(tools[i].id !== id) newTools.push(tools[i]); }
+    tools = newTools;
+    saveToStorage();
+    renderTools();
+    updateStats();
+    showToast('Tool deleted');
+}
+
+function renderTools() {
+    var container = document.getElementById('toolsContainer');
+    if(!tools.length) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🧰</div><div>No tools added yet. Add your tools above.</div></div>';
+        return;
+    }
+    var html = '';
+    for(var i = 0; i < tools.length; i++) {
+        html += '<div class="tool-item animate-in"><div class="tool-info"><div class="tool-name">' + escapeHtml(tools[i].name) + '</div><div class="tool-use">' + escapeHtml(tools[i].use) + '</div></div><div style="display:flex;align-items:center;gap:12px;"><span class="tool-value">$' + escapeHtml(tools[i].value) + '</span><button class="delete-btn" style="opacity:1;" onclick="deleteTool(' + tools[i].id + ')">🗑️</button></div></div>';
+    }
+    container.innerHTML = html;
+}
+
+// ==================== VOICE NOTES ====================
+function startRecording() {
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream) {
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        mediaRecorder.ondataavailable = function(e) { if(e.data.size > 0) audioChunks.push(e.data); };
+        mediaRecorder.onstop = function() {
+            var blob = new Blob(audioChunks, {type:'audio/webm'});
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                voiceNotes.push({id:Date.now(), data:e.target.result, duration:recordingSeconds, timestamp:new Date().toISOString()});
+                saveToStorage();
+                renderVoiceNotes();
+                showToast('🎙️ Voice note saved!');
+            };
+            reader.readAsDataURL(blob);
+            stream.getTracks().forEach(function(t) { t.stop(); });
+        };
+        mediaRecorder.start();
+        recordingSeconds = 0;
+        document.getElementById('recordingIndicator').classList.add('active');
+        document.getElementById('recordBtn').disabled = true;
+        document.getElementById('stopBtn').disabled = false;
+        recordingTimer = setInterval(function() {
+            recordingSeconds++;
+            var m = Math.floor(recordingSeconds / 60);
+            var s = recordingSeconds % 60;
+            document.getElementById('recordingTime').textContent = m + ':' + s.toString().padStart(2,'0');
+        }, 1000);
+    }).catch(function(err) { showToast('Microphone access denied or not available'); });
+}
+
+function stopRecording() {
+    if(!mediaRecorder || mediaRecorder.state === 'inactive') return;
+    mediaRecorder.stop();
+    clearInterval(recordingTimer);
+    document.getElementById('recordingIndicator').classList.remove('active');
+    document.getElementById('recordBtn').disabled = false;
+    document.getElementById('stopBtn').disabled = true;
+    document.getElementById('recordingTime').textContent = '0:00';
+}
+
+function playVoiceNote(id) {
+    var note = null;
+    for(var i = 0; i < voiceNotes.length; i++) { if(voiceNotes[i].id === id) { note = voiceNotes[i]; break; } }
+    if(!note) return;
+    var audio = new Audio(note.data);
+    audio.play();
+    showToast('▶️ Playing voice note...');
+}
+
+function deleteVoiceNote(id) {
+    if(!confirm('Delete this voice note?')) return;
+    var newNotes = [];
+    for(var i = 0; i < voiceNotes.length; i++) { if(voiceNotes[i].id !== id) newNotes.push(voiceNotes[i]); }
+    voiceNotes = newNotes;
+    saveToStorage();
+    renderVoiceNotes();
+    showToast('Voice note deleted');
+}
+
+function renderVoiceNotes() {
+    var container = document.getElementById('voiceNotesList');
+    if(!voiceNotes.length) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎙️</div><div>No voice notes yet. Tap record to add one.</div></div>';
+        return;
+    }
+    var html = '';
+    for(var i = 0; i < voiceNotes.length; i++) {
+        var m = Math.floor(voiceNotes[i].duration / 60);
+        var s = voiceNotes[i].duration % 60;
+        html += '<div class="voice-note-item animate-in"><button class="voice-note-play" onclick="playVoiceNote(' + voiceNotes[i].id + ')">▶️</button><div class="voice-note-info"><div class="voice-note-duration">Voice Note — ' + m + ':' + s.toString().padStart(2,'0') + '</div><div class="voice-note-date">' + new Date(voiceNotes[i].timestamp).toLocaleString() + '</div></div><button class="voice-note-delete" onclick="deleteVoiceNote(' + voiceNotes[i].id + ')">🗑️</button></div>';
+    }
+    container.innerHTML = html;
+}
+
+// ==================== BACKUP & EXPORT ====================
+function exportAllData() {
+    var data = {tasks:tasks, schedule:schedule, scheduleImage:scheduleImage, photos:photos, flyLights:flyLights, inventory:inventory, tools:tools, voiceNotes:voiceNotes, exportDate:new Date().toISOString()};
+    var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'pest-tech-backup-' + new Date().toISOString().split('T')[0] + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('📥 All data exported!');
+}
+
+function exportPhotos() {
+    var taskPhotoCount = 0;
+    for(var i = 0; i < tasks.length; i++) taskPhotoCount += (tasks[i].photos || []).length;
+    if(!photos.length && !taskPhotoCount) { showToast('No photos to export'); return; }
+    var html = '<html><body><h1>Pest Tech Pro - Photo Export</h1>';
+    if(photos.length) {
+        html += '<h2>Job Site Photos</h2>';
+        for(var i = 0; i < photos.length; i++) {
+            html += '<div style="margin-bottom:20px;"><img src="' + photos[i].data + '" style="max-width:100%;"><p>Photo ' + (i+1) + ' — ' + new Date(photos[i].timestamp).toLocaleString() + '</p></div>';
+        }
+    }
+    for(var i = 0; i < tasks.length; i++) {
+        var tp = tasks[i].photos || [];
+        if(!tp.length) continue;
+        html += '<h2>Task: ' + escapeHtml(tasks[i].text) + '</h2>';
+        for(var j = 0; j < tp.length; j++) {
+            html += '<div style="margin-bottom:20px;"><img src="' + tp[j].data + '" style="max-width:100%;"><p>' + new Date(tp[j].timestamp).toLocaleString() + '</p></div>';
+        }
+    }
+    html += '</body></html>';
+    var blob = new Blob([html], {type:'text/html'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'pest-tech-photos-' + new Date().toISOString().split('T')[0] + '.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('📸 Photos exported!');
+}
+
+function loadJsPDF() {
+    return new Promise(function(res, rej) {
+        if(window.jspdf && window.jspdf.jsPDF) { res(); return; }
+        var sc = document.createElement('script');
+        sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        sc.onload = res;
+        sc.onerror = function() { rej(new Error('could not load PDF library (need internet)')); };
+        document.head.appendChild(sc);
+    });
+}
+
+function exportReportPDF() {
+    showToast('📄 Building PDF...');
+    loadJsPDF().then(function() {
+        var jsPDF = window.jspdf.jsPDF;
+        var doc = new jsPDF({unit:'pt', format:'a4'});
+        var margin = 40, pw = doc.internal.pageSize.getWidth(), ph = doc.internal.pageSize.getHeight();
+        var maxw = pw - margin * 2, y = margin;
+        function brk(step) { y += step; if(y > ph - margin) { doc.addPage(); y = margin; } }
+        function heading(t) {
+            brk(10);
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(27, 67, 50);
+            doc.text(t, margin, y); y += 5; doc.setDrawColor(200); doc.line(margin, y, pw - margin, y);
+            doc.setTextColor(20); brk(14);
+        }
+        function line(t, opts) {
+            opts = opts || {};
+            doc.setFont('helvetica', opts.bold ? 'bold' : 'normal'); doc.setFontSize(opts.size || 10);
+            var c = opts.color || [20, 20, 20]; doc.setTextColor(c[0], c[1], c[2]);
+            var ind = opts.indent || 0;
+            var wrapped = doc.splitTextToSize(t, maxw - ind);
+            for(var i = 0; i < wrapped.length; i++) {
+                if(y > ph - margin) { doc.addPage(); y = margin; }
+                doc.text(wrapped[i], margin + ind, y); y += (opts.size || 10) + 4;
+            }
+        }
+        var now = new Date(), tIso = todayISO();
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(18); doc.setTextColor(27, 67, 50);
+        doc.text('Pest Tech Pro — Work Report', margin, y); y += 22;
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(90);
+        doc.text(now.toLocaleString(), margin, y); doc.setTextColor(20);
+
+        var todayTasks = tasksForDate(tIso);
+        heading("Today's Schedule (" + now.toLocaleDateString('en-US', {weekday:'long', month:'short', day:'numeric'}) + ')');
+        if(todayTasks.length) todayTasks.forEach(function(t) { line('• ' + t); }); else line('No scheduled tasks today.');
+
+        var done = tasks.filter(function(t) { return t.completed; });
+        var pend = tasks.filter(function(t) { return !t.completed; });
+        heading('Tasks — ' + done.length + ' done / ' + pend.length + ' pending');
+        if(done.length) { line('Completed:', {bold:true}); done.forEach(function(t) { line('✓ ' + t.text + ((t.photos || []).length ? ' [' + t.photos.length + ' photo]' : ''), {indent:10}); }); }
+        if(pend.length) { line('Pending:', {bold:true}); pend.forEach(function(t) { line('• ' + t.text, {indent:10}); }); }
+        if(!tasks.length) line('No tasks.');
+
+        var active = 0, inactive = 0, doneWk = 0;
+        flyLights.forEach(function(f) { if(f.status === 'Inactive') inactive++; else active++; if(flCheckedThisWeek(f)) doneWk++; });
+        heading('Fly Lights — ' + flyLights.length + ' units');
+        line('Active: ' + active + '   |   Inactive: ' + inactive + '   |   Checked this week: ' + doneWk + '/' + flyLights.length);
+        flyLights.slice().sort(function(a, b) { return a.num - b.num; }).forEach(function(f) {
+            line('#' + f.num + ' ' + (f.location || '—') + ' — ' + f.status + (f.status === 'Inactive' ? ' (' + f.inactiveReason + ')' : '') + (flCheckedThisWeek(f) ? ' [done]' : ''), {indent:6, color: f.status === 'Inactive' ? [200, 60, 40] : [20, 20, 20]});
+        });
+
+        heading('Inventory');
+        var locs = Object.keys(inventory);
+        if(locs.length) locs.forEach(function(L) { line(L + ':', {bold:true}); (inventory[L] || []).forEach(function(it) { line('• ' + it.name + ': ' + it.quantity, {indent:10}); }); if(!inventory[L].length) line('(empty)', {indent:10}); });
+        else line('No inventory.');
+
+        heading('Tools');
+        if(tools.length) { var tv = 0; tools.forEach(function(t) { tv += parseFloat(t.value) || 0; line('• ' + t.name + ' — $' + t.value + (t.use ? ' (' + t.use + ')' : ''), {indent:6}); }); line('Total value: $' + tv.toFixed(2), {bold:true}); }
+        else line('No tools.');
+
+        doc.save('pest-tech-report-' + tIso + '.pdf');
+        showToast('📄 PDF report saved!');
+    }).catch(function() {
+        showToast('Offline — saved as text instead');
+        exportReport();
+    });
+}
+
+function exportReport() {
+    var now = new Date();
+    var report = 'PEST TECH PRO - WORK REPORT\nGenerated: ' + now.toLocaleString() + '\n\n';
+    var completed = 0, pending = 0;
+    for(var i = 0; i < tasks.length; i++) { if(tasks[i].completed) completed++; else pending++; }
+    report += '=== TASKS ===\nTotal: ' + tasks.length + '\nCompleted: ' + completed + '\nPending: ' + pending + '\n\n';
+    if(tasks.length) {
+        report += 'Completed Tasks:\n';
+        for(var i = 0; i < tasks.length; i++) { if(tasks[i].completed) report += '✅ ' + tasks[i].text + ((tasks[i].photos || []).length ? ' [' + tasks[i].photos.length + ' photo(s)]' : '') + '\n'; }
+        if(!completed) report += 'None\n';
+        report += '\nPending Tasks:\n';
+        for(var i = 0; i < tasks.length; i++) { if(!tasks[i].completed) report += '⏳ ' + tasks[i].text + ((tasks[i].photos || []).length ? ' [' + tasks[i].photos.length + ' photo(s)]' : '') + '\n'; }
+        if(!pending) report += 'None\n';
+        report += '\n';
+    }
+    var flActive = 0, flInactive = 0, flDoneWk = 0;
+    for(var i = 0; i < flyLights.length; i++) {
+        if(flyLights[i].status === 'Inactive') flInactive++; else flActive++;
+        if(flCheckedThisWeek(flyLights[i])) flDoneWk++;
+    }
+    report += '=== FLY LIGHTS ===\nTotal: ' + flyLights.length + ' | Active: ' + flActive + ' | Inactive: ' + flInactive + ' | Checked this week: ' + flDoneWk + '\n';
+    var flSorted = flyLights.slice().sort(function(a,b) { return a.num - b.num; });
+    for(var i = 0; i < flSorted.length; i++) {
+        var f = flSorted[i];
+        report += '#' + f.num + ' ' + (f.location || '—') + ' — ' + f.status + (f.status === 'Inactive' ? ' (' + f.inactiveReason + ')' : '') + ', Check: ' + f.check + (flCheckedThisWeek(f) ? ' [done this wk]' : '') + (f.notes ? ', Notes: ' + f.notes : '') + '\n';
+    }
+    if(!flyLights.length) report += 'None\n';
+    report += '\n=== INVENTORY ===\n';
+    var locs = Object.keys(inventory);
+    for(var i = 0; i < locs.length; i++) {
+        var items = inventory[locs[i]];
+        report += '📍 ' + locs[i] + ':\n';
+        for(var j = 0; j < items.length; j++) report += '  • ' + items[j].name + ': ' + items[j].quantity + '\n';
+        if(!items.length) report += '  (empty)\n';
+    }
+    if(!locs.length) report += 'No inventory\n';
+    report += '\n=== TOOLS ===\n';
+    var totalVal = 0;
+    for(var i = 0; i < tools.length; i++) totalVal += (parseFloat(tools[i].value) || 0);
+    report += 'Total Value: $' + totalVal.toFixed(2) + '\n';
+    for(var i = 0; i < tools.length; i++) report += '• ' + tools[i].name + ' — $' + tools[i].value + ' (' + tools[i].use + ')\n';
+    if(!tools.length) report += 'None\n';
+    var taskPhotoCount = 0;
+    for(var i = 0; i < tasks.length; i++) taskPhotoCount += (tasks[i].photos || []).length;
+    report += '\n=== PHOTOS ===\nJob Site Photos: ' + photos.length + '\nTask Photos: ' + taskPhotoCount + '\n';
+    for(var i = 0; i < photos.length; i++) report += 'Photo ' + (i+1) + ': ' + new Date(photos[i].timestamp).toLocaleString() + '\n';
+    if(!photos.length) report += 'None\n';
+    report += '\n=== VOICE NOTES ===\nTotal: ' + voiceNotes.length + '\n';
+    for(var i = 0; i < voiceNotes.length; i++) {
+        var m = Math.floor(voiceNotes[i].duration / 60);
+        var s = voiceNotes[i].duration % 60;
+        report += 'Note ' + (i+1) + ': ' + m + ':' + s.toString().padStart(2,'0') + ' — ' + new Date(voiceNotes[i].timestamp).toLocaleString() + '\n';
+    }
+    if(!voiceNotes.length) report += 'None\n';
+    var blob = new Blob([report], {type:'text/plain'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'pest-tech-report-' + now.toISOString().split('T')[0] + '.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('📄 Report exported!');
+}
+
+function handleImport(event) {
+    var file = event.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            var data = JSON.parse(e.target.result);
+            if(data.tasks) tasks = data.tasks;
+            if(data.schedule) schedule = data.schedule;
+            if(data.scheduleImage !== undefined) scheduleImage = data.scheduleImage;
+            if(data.photos) photos = data.photos;
+            if(data.flyLights) flyLights = data.flyLights;
+            if(data.inventory) inventory = data.inventory;
+            if(data.tools) tools = data.tools;
+            if(data.voiceNotes) voiceNotes = data.voiceNotes;
+            saveToStorage();
+            renderAll();
+            showToast('📤 Data imported successfully!');
+        } catch(err) { showToast('Error importing data. Invalid file.'); }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+// ==================== STATS ====================
+function updateStats() {
+    var completed = 0, total = tasks.length;
+    for(var i = 0; i < tasks.length; i++) { if(tasks[i].completed) completed++; }
+    var remaining = total - completed;
+    var pct = total ? Math.round((completed / total) * 100) : 0;
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statDone').textContent = completed;
+    document.getElementById('statRemaining').textContent = remaining;
+    document.getElementById('statProgress').textContent = pct + '%';
+}
+
+function renderAll() {
+    renderTasks(currentTaskFilter);
+    renderSchedule();
+    renderCalendar();
+    renderPhotos();
+    renderFlyLights();
+    renderInventory();
+    renderTools();
+    renderVoiceNotes();
+    updateStats();
+}
+
+// ==================== STORAGE ====================
+function saveToStorage() {
+    try {
+        localStorage.setItem('pestTechTasks', JSON.stringify(tasks));
+        localStorage.setItem('pestTechSchedule', JSON.stringify(schedule));
+        localStorage.setItem('pestTechSchedImg', scheduleImage || '');
+        localStorage.setItem('pestTechPhotos', JSON.stringify(photos));
+        localStorage.setItem('pestTechFlyLights', JSON.stringify(flyLights));
+        localStorage.setItem('pestTechInventory', JSON.stringify(inventory));
+        localStorage.setItem('pestTechTools', JSON.stringify(tools));
+        localStorage.setItem('pestTechVoiceNotes', JSON.stringify(voiceNotes));
+        localStorage.setItem('pestTechWallpaper', currentWallpaper || '');
+        localStorage.setItem('pestTechOpacity', currentOpacity);
+        localStorage.setItem('pestTechDarkMode', document.body.classList.contains('dark-mode'));
+    } catch(e) { console.warn('Storage save failed:', e); }
+}
+
+function loadFromStorage() {
+    try {
+        var t = localStorage.getItem('pestTechTasks');
+        var s = localStorage.getItem('pestTechSchedule');
+        var p = localStorage.getItem('pestTechPhotos');
+        var fl = localStorage.getItem('pestTechFlyLights');
+        var inv = localStorage.getItem('pestTechInventory');
+        var tl = localStorage.getItem('pestTechTools');
+        var vn = localStorage.getItem('pestTechVoiceNotes');
+        var wp = localStorage.getItem('pestTechWallpaper');
+        var op = localStorage.getItem('pestTechOpacity');
+        var dm = localStorage.getItem('pestTechDarkMode');
+        var thm = localStorage.getItem('pestTechTheme');
+        if(thm && THEMES[thm]) applyTheme(thm);
+        if(t) tasks = JSON.parse(t);
+        if(s) schedule = JSON.parse(s);
+        // migrate old CSV-shaped schedule (date/client/location/service) to day/task
+        for(var si = 0; si < schedule.length; si++) {
+            if(schedule[si].task === undefined) {
+                var oldS = schedule[si];
+                schedule[si] = {id:oldS.id || (Date.now() + si), day:'Daily', task:[oldS.service, oldS.client, oldS.location].filter(Boolean).join(' — ') || 'Scheduled task'};
+            }
+        }
+        var simg = localStorage.getItem('pestTechSchedImg');
+        if(simg) scheduleImage = simg;
+        if(p) photos = JSON.parse(p);
+        if(fl) flyLights = JSON.parse(fl);
+        // migrate any old-schema fly lights, then seed Princess 44 if empty
+        for(var k = 0; k < flyLights.length; k++) {
+            if(flyLights[k].num === undefined) {
+                flyLights[k] = {id:flyLights[k].id || ('fl' + Date.now() + k), num:k + 1, location:flyLights[k].name || flyLights[k].location || '', status:'Active', inactiveReason:'', check:'Clear', lastCheckedISO:null, notes:flyLights[k].notes || '', lastUpdated:new Date().toISOString()};
+            }
+        }
+        if(!flyLights.length) flyLights = flySeedData();
+        if(inv) inventory = JSON.parse(inv);
+        if(tl) tools = JSON.parse(tl);
+        if(vn) voiceNotes = JSON.parse(vn);
+        if(wp) {
+            currentWallpaper = wp;
+            if(wp.startsWith('color:')) {
+                document.body.style.backgroundColor = wp.replace('color:','');
+            } else if(wp) {
+                document.body.style.backgroundImage = 'url(' + wp + ')';
+                document.body.classList.add('has-wallpaper');
+                document.getElementById('bgOverlay').classList.add('wallpaper-active');
+            }
+        }
+        if(op) {
+            currentOpacity = parseInt(op);
+            updateOpacity(currentOpacity);
+        }
+        if(dm === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+    } catch(e) {
+        console.warn('Storage load failed:', e);
+        tasks = []; schedule = []; photos = []; flyLights = []; inventory = {}; tools = []; voiceNotes = [];
+    }
+}
+
+// ==================== UTILS ====================
+function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function escAttr(text) { return escapeHtml(text == null ? '' : String(text)).replace(/"/g, '&quot;'); }
+
+function showToast(message) {
+    var toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(function() { toast.classList.remove('show'); }, 3000);
+}
+</script>
+</body>
+</html>
