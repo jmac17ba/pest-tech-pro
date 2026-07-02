@@ -922,7 +922,28 @@ document.addEventListener('DOMContentLoaded', function() {
     updateStats();
     setupDragDrop();
     if(syncEnabled) { startSyncPolling(); pullSync(); }
+    watchDayChange();
 });
+
+// Live midnight rollover: phones keep the app open for days — without this the
+// view only reset on a full reload. Checks every minute + whenever the app
+// returns to the foreground.
+var lastSeenDay = null;
+function watchDayChange() {
+    lastSeenDay = todayISO();
+    function check() {
+        if(todayISO() === lastSeenDay) return;
+        lastSeenDay = todayISO();
+        updateDate();
+        addTodaySchedule(true);   // re-renders tasks + stats
+        selectedDate = todayISO();
+        renderCalendar();
+        scheduleReminders();
+        showToast('🌅 New day — tasks reset');
+    }
+    setInterval(check, 60000);
+    document.addEventListener('visibilitychange', function() { if(!document.hidden) check(); });
+}
 
 function updateDate() {
     var now = new Date();
@@ -1093,6 +1114,7 @@ function toggleTask(id) {
     for(var i = 0; i < tasks.length; i++) {
         if(tasks[i].id === id) {
             tasks[i].completed = !tasks[i].completed;
+            tasks[i].completedAt = tasks[i].completed ? new Date().toISOString() : null;
             break;
         }
     }
@@ -1130,7 +1152,7 @@ function renderTasks(filter) {
     var routineHtml = (filter === 'all' || filter === 'routine') ? (buildTodayScheduleHtml() + buildFlyRoutineHtml()) : '';
     var filtered = [];
     for(var i = 0; i < tasks.length; i++) {
-        if(filter === 'all' || tasks[i].type === filter) filtered.push(tasks[i]);
+        if((filter === 'all' || tasks[i].type === filter) && isVisibleToday(tasks[i])) filtered.push(tasks[i]);
     }
     if(!filtered.length && !routineHtml) {
         container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div><div>No ' + filter + ' tasks yet.</div></div>';
@@ -1246,7 +1268,13 @@ function handleTaskUpload(event) {
 
 // ==================== SCHEDULE ====================
 function todayDayCode() { return DAY_CODES[new Date().getDay()]; }
-function todayISO() { return new Date().toISOString().split('T')[0]; }
+// LOCAL date, not UTC. toISOString() is UTC — Jamaica is UTC-5, so the old
+// version flipped the app's "day" at 7pm and burned tomorrow's schedule keys.
+function todayISO() { return localDayOf(new Date()); }
+function localDayOf(ts) { var d = new Date(ts); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+// A task shows in Today's list if it's still open, or was completed TODAY.
+// Older completed tasks stay in storage (photos preserved) but leave the view.
+function isVisibleToday(t) { return !t.completed || localDayOf(t.completedAt || t.created) === todayISO(); }
 function schedMatchesToday(s) {
     if(s.date) return s.date === todayISO();
     return s.day === todayDayCode() || s.day === 'Daily';
@@ -1449,7 +1477,7 @@ function buildTodayScheduleHtml() {
     var pending = 0;
     var h = '<div class="fl-routine-card" style="border-color:var(--warning);background:linear-gradient(135deg,#fef3c7,transparent);"><div class="fl-routine-head">📅 Today\'s Schedule — ' + DAY_FULL[today] + ' <small>' + items.length + ' task(s)</small></div>';
     for(var i = 0; i < items.length; i++) {
-        var key = dateStr + '|' + items[i].id;
+        var key = 'v2|' + dateStr + '|' + items[i].id;
         var added = tasks.some(function(t) { return t.schedKey === key; });
         if(!added) pending++;
         h += '<div class="fl-unit"><div class="fl-unit-loc">' + escapeHtml(items[i].task) + (added ? ' <span class="fl-badge active">added</span>' : '') + '</div></div>';
@@ -1465,7 +1493,10 @@ function addTodaySchedule(silent) {
     var items = schedule.filter(schedMatchesToday);
     var added = 0;
     for(var i = 0; i < items.length; i++) {
-        var key = dateStr + '|' + items[i].id;
+        // 'v2|' prefix: old keys were stamped with the UTC date (wrong after 7pm
+        // local), which blocked the next morning's add. v2 keys never collide
+        // with the poisoned ones.
+        var key = 'v2|' + dateStr + '|' + items[i].id;
         var exists = tasks.some(function(t) { return t.schedKey === key; });
         if(exists) continue;
         tasks.push({id:Date.now() + i, text:items[i].task, completed:false, type:'routine', photos:[], timer:null, created:new Date().toISOString(), schedKey:key});
@@ -1815,10 +1846,10 @@ function flWeekKey(d) {
     var day = (x.getDay() + 6) % 7; // Monday = 0
     x.setHours(0,0,0,0);
     x.setDate(x.getDate() - day);
-    return x.toISOString().split('T')[0];
+    return localDayOf(x);   // local date — UTC version shifted the week edge by 5h
 }
 function flCheckedThisWeek(f) { return f.lastCheckedISO && flWeekKey(f.lastCheckedISO) === flWeekKey(new Date()); }
-function flCheckedToday(f) { return f.lastCheckedISO && f.lastCheckedISO.split('T')[0] === new Date().toISOString().split('T')[0]; }
+function flCheckedToday(f) { return f.lastCheckedISO && localDayOf(f.lastCheckedISO) === todayISO(); }
 function flDue() {
     return flyLights.filter(function(f) { return !flCheckedThisWeek(f); }).sort(function(a,b) { return a.num - b.num; });
 }
@@ -2468,8 +2499,13 @@ function handleImport(event) {
 
 // ==================== STATS ====================
 function updateStats() {
-    var completed = 0, total = tasks.length;
-    for(var i = 0; i < tasks.length; i++) { if(tasks[i].completed) completed++; }
+    // Stats cover TODAY's view (open tasks + today's completions), not all history.
+    var completed = 0, total = 0;
+    for(var i = 0; i < tasks.length; i++) {
+        if(!isVisibleToday(tasks[i])) continue;
+        total++;
+        if(tasks[i].completed) completed++;
+    }
     var remaining = total - completed;
     var pct = total ? Math.round((completed / total) * 100) : 0;
     document.getElementById('statTotal').textContent = total;
