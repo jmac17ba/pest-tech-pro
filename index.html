@@ -565,6 +565,8 @@ body.glass.dark-mode .theme-swatch{background:rgba(255,255,255,0.08)!important;b
 
 <div class="tabs" style="margin-bottom:20px;">
 <button class="tab active" onclick="switchSection('dashboard')" id="tab-dashboard">📋 Dashboard</button>
+<button class="tab" onclick="switchSection('history')" id="tab-history">📖 History</button>
+<button class="tab" onclick="switchSection('academy')" id="tab-academy">🎓 Academy</button>
 <button class="tab" onclick="switchSection('flylights')" id="tab-flylights">💡 Fly Lights</button>
 <button class="tab" onclick="switchSection('inventory')" id="tab-inventory">📦 Inventory</button>
 <button class="tab" onclick="switchSection('tools')" id="tab-tools">🧰 Tools</button>
@@ -760,6 +762,21 @@ body.glass.dark-mode .theme-swatch{background:rgba(255,255,255,0.08)!important;b
 </div>
 </div>
 </div>
+</div>
+
+<div id="history-section" class="tab-content">
+<div class="card">
+<div class="card-header"><div class="card-title">📖 Work History</div></div>
+<div class="card-body">
+<div style="color:var(--text-muted);font-size:13px;margin-bottom:10px;">Every completed task is kept with its photos. Pick a day to see what you did — proof, on demand.</div>
+<div id="historyDayPicker" style="margin-bottom:14px;"></div>
+<div id="historyDetail"></div>
+</div>
+</div>
+</div>
+
+<div id="academy-section" class="tab-content">
+<div id="academyRoot"></div>
 </div>
 
 <div id="backup-section" class="tab-content">
@@ -1089,6 +1106,8 @@ function switchSection(name) {
     document.getElementById(name + '-section').classList.add('active');
     document.querySelectorAll('.tabs .tab').forEach(function(el) { el.classList.remove('active'); });
     document.getElementById('tab-' + name).classList.add('active');
+    if(name === 'history') renderHistory();
+    if(name === 'academy') renderAcademy();
 }
 
 function switchTaskTab(filter) {
@@ -2290,7 +2309,8 @@ function renderVoiceNotes() {
 
 // ==================== BACKUP & EXPORT ====================
 function exportAllData() {
-    var data = {tasks:tasks, schedule:schedule, scheduleImage:scheduleImage, photos:photos, flyLights:flyLights, inventory:inventory, tools:tools, voiceNotes:voiceNotes, exportDate:new Date().toISOString()};
+    loadAcademy();
+    var data = {tasks:tasks, schedule:schedule, scheduleImage:scheduleImage, photos:photos, flyLights:flyLights, inventory:inventory, tools:tools, voiceNotes:voiceNotes, academy:A, exportDate:new Date().toISOString()};
     var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
@@ -2488,6 +2508,7 @@ function handleImport(event) {
             if(data.inventory) inventory = data.inventory;
             if(data.tools) tools = data.tools;
             if(data.voiceNotes) voiceNotes = data.voiceNotes;
+            if(data.academy) { A = data.academy; acadLoaded = true; saveAcademy(); }
             saveToStorage();
             renderAll();
             showToast('📤 Data imported successfully!');
@@ -2746,6 +2767,328 @@ function showToast(message) {
     toast.textContent = message;
     toast.classList.add('show');
     setTimeout(function() { toast.classList.remove('show'); }, 3000);
+}
+
+// ==================== WORK HISTORY ====================
+var historySelectedDay = null;
+function renderHistory() {
+    var done = tasks.filter(function(t) { return t.completed && (t.completedAt || t.created); });
+    var byDay = {};
+    for(var i = 0; i < done.length; i++) {
+        var d = localDayOf(done[i].completedAt || done[i].created);
+        (byDay[d] = byDay[d] || []).push(done[i]);
+    }
+    var days = Object.keys(byDay).sort().reverse();
+    var picker = document.getElementById('historyDayPicker');
+    if(!days.length) {
+        picker.innerHTML = '';
+        document.getElementById('historyDetail').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📖</div><div>No completed work yet. Finish some tasks and they\'ll be logged here.</div></div>';
+        return;
+    }
+    if(!historySelectedDay || !byDay[historySelectedDay]) historySelectedDay = days[0];
+    picker.innerHTML = days.map(function(d) {
+        var lbl = new Date(d + 'T00:00:00').toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+        var on = d === historySelectedDay;
+        return '<button class="btn btn-sm ' + (on ? 'btn-primary' : 'btn-secondary') + '" style="margin:0 6px 6px 0;" onclick="historyPick(\'' + d + '\')">' + lbl + ' <span style="opacity:.7">(' + byDay[d].length + ')</span></button>';
+    }).join('');
+    var items = byDay[historySelectedDay];
+    var lblFull = new Date(historySelectedDay + 'T00:00:00').toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+    var h = '<div class="cal-day-title" style="margin-bottom:10px;">' + lblFull + ' — ' + items.length + ' completed</div>';
+    for(var j = 0; j < items.length; j++) {
+        var t = items[j], pics = t.photos || [];
+        h += '<div class="task-item completed" style="margin-bottom:8px;"><div class="task-row"><div class="task-checkbox checked"></div><div class="task-text">' + escapeHtml(t.text) + '</div><div class="task-meta">' + (t.type === 'special' ? '<span class="badge badge-special">Special</span>' : '<span class="badge badge-routine">Routine</span>') + '</div></div>';
+        if(pics.length) {
+            h += '<div class="task-photos">';
+            for(var p = 0; p < pics.length; p++) h += '<span class="task-photo-wrap"><img class="task-photo-thumb" src="' + pics[p].data + '" onclick="openTaskPhotoModal(' + t.id + ',' + p + ')"></span>';
+            h += '</div>';
+        }
+        h += '</div>';
+    }
+    document.getElementById('historyDetail').innerHTML = h;
+}
+function historyPick(d) { historySelectedDay = d; renderHistory(); }
+
+// ==================== ACADEMY: Technician → Service Specialist ====================
+// 6-month roadmap (Jamaica PCA-oriented). Spaced repetition (SM-2 lite) + level quizzes.
+// Add your own Ecolab material any time via academyAddCard() / the backup import.
+var MODULES = [
+ {id:1, name:'Pest Biology & ID', icon:'🐜', month:'Month 1', goal:'Know the enemy: identify the pests you meet on the ship and understand why they behave the way they do.'},
+ {id:2, name:'Inspection, Monitoring & IPM', icon:'🔍', month:'Month 2', goal:'Find pests before they spread. Read your fly lights, bait stations and conducive conditions like a specialist.'},
+ {id:3, name:'Pesticides, Labels & Chemistry', icon:'🧪', month:'Month 3', goal:'Understand formulations, modes of action, the label as law, and how to read a signal word.'},
+ {id:4, name:'Application Equipment & Technique', icon:'🔧', month:'Month 4', goal:'Calibrate, mix, and apply correctly and safely — the hands-on craft of the trade.'},
+ {id:5, name:'Safety, PPE & Jamaica Law (PCA)', icon:'⚖️', month:'Month 5', goal:'Protect yourself and stay legal under the Pesticides Control Authority. This is the license gate.'},
+ {id:6, name:'Food Safety, Ship Sanitation & Service', icon:'🚢', month:'Month 6', goal:'USPH/VSP standards, documentation, and the professional/customer skills that make a Service Specialist.'}
+];
+// Card: {id, m:module, d:difficulty 1-3, q, c:[choices], a:answerIndex, w:why}
+var BANK = [
+ // ---- Module 1: Biology & ID ----
+ {id:'m1a', m:1, d:1, q:'A cockroach with a full life cycle of egg → nymph → adult (no pupa) undergoes which type of metamorphosis?', c:['Complete','Incomplete (gradual)','No metamorphosis','Reverse'], a:1, w:'Cockroaches, bed bugs and flies-of-the-order differ: roaches show INCOMPLETE metamorphosis — egg, nymph, adult. Nymphs look like small adults. Complete metamorphosis (egg-larva-pupa-adult) is flies, beetles, ants, moths.'},
+ {id:'m1b', m:1, d:1, q:'The German cockroach carries its egg case (ootheca) how?', c:['Glued to a wall days after forming','Carried by the female until just before hatching','Buried underground','Dropped immediately'], a:1, w:'German roaches carry the ootheca until hatch — that\'s why glue-and-bait control beats spray: you must reach nymphs. American/Oriental roaches deposit the case early.'},
+ {id:'m1c', m:1, d:2, q:'You find small droppings like coarse black pepper near a fly light. Most likely?', c:['German cockroach','Rodent (mouse)','Housefly','Ant'], a:0, w:'German cockroach droppings look like ground pepper/coffee and often mark harborage. Mouse droppings are rice-grain sized and pointed. ID by evidence is core to inspection.'},
+ {id:'m1d', m:1, d:2, q:'Houseflies are a food-safety threat mainly because they:', c:['Bite and draw blood','Regurgitate and defecate on food while feeding','Chew through packaging','Nest in walls'], a:1, w:'Flies liquefy food with saliva, vomit onto it, and defecate frequently — mechanically transferring pathogens (Salmonella, E. coli). On a cruise galley this is a direct contamination route.'},
+ {id:'m1e', m:1, d:2, q:'Which condition most attracts stored-product pests like the Indianmeal moth?', c:['Sealed metal cans','Dry goods: flour, grains, dried fruit','Fresh refrigerated meat','Bleach-cleaned steel'], a:1, w:'Stored-product pests infest dry pantry goods. Webbing in flour/grain and moths near dry stores signal them. Rotate stock (FIFO) and inspect incoming provisions.'},
+ {id:'m1f', m:1, d:3, q:'A mouse can enter through a gap of roughly what size?', c:['Only open doors','About 6 mm (¼ inch)','25 mm minimum','It cannot squeeze through gaps'], a:1, w:'A mouse fits through ~6 mm — the width of a pencil. Rats need ~12 mm. This is why exclusion (sealing gaps) is the most durable rodent control on a vessel.'},
+ {id:'m1g', m:1, d:3, q:'Ants leave a chemical trail to food using:', c:['Sound','Pheromones','Visual markers only','Static charge'], a:1, w:'Ants lay pheromone trails; killing foragers you see does little. Baits carried back to the colony, plus cleaning trails, break the pattern — an IPM, not spray, mindset.'},
+ {id:'m1h', m:1, d:3, q:'Why are bed bugs hard to eliminate with a single treatment?', c:['They fly between rooms','Eggs resist many contact sprays and hatch later','They live only outdoors','They die in one day regardless'], a:1, w:'Bed bug eggs are glued in cracks and resist many contact insecticides, so a follow-up is needed to catch newly hatched nymphs. On ships, cabin turnover spreads them via luggage.'},
+ {id:'m1i', m:1, d:1, q:'A "harborage" is:', c:['A cleaning chemical','A sheltered place where pests hide and breed','A type of trap','A ship deck'], a:1, w:'Harborage = the cracks, voids and clutter where pests shelter. Finding and eliminating harborage (sealing, decluttering) is more permanent than killing what you see.'},
+
+ // ---- Module 2: Inspection, Monitoring & IPM ----
+ {id:'m2a', m:2, d:1, q:'What does IPM stand for?', c:['Instant Pest Murder','Integrated Pest Management','Internal Product Manual','Inspected Premises Model'], a:1, w:'IPM = Integrated Pest Management: combine inspection, sanitation, exclusion, monitoring and — only as needed — pesticides. Chemicals are a tool, not the first move.'},
+ {id:'m2b', m:2, d:1, q:'In IPM, what is the FIRST line of defense before pesticides?', c:['Fogging everything','Sanitation & exclusion (deny food, water, entry)','Maximum-strength spray','Nothing — spray first'], a:1, w:'IPM prioritizes removing food/water/harborage and sealing entry. Pesticides come last and targeted. This is exactly what your fly-light + sanitation routine embodies.'},
+ {id:'m2c', m:2, d:2, q:'A fly light (ILT) works best when placed:', c:['Facing an exterior door/window where it competes with daylight','Away from doors, not visible from outside, ~1.5–2 m high intercepting flies','On the ceiling center','Inside a cupboard'], a:1, w:'Insect light traps should intercept flies entering, not be visible outside (that draws pests IN) and not compete with daylight. Mount low-to-mid height, away from food-prep surfaces.'},
+ {id:'m2d', m:2, d:2, q:'Recording catch counts per fly light over weeks lets you:', c:['Nothing useful','Spot trends and rising activity early (a monitoring signal)','Only satisfy paperwork','Replace inspection'], a:1, w:'A rising count at one unit flags a developing problem or a new entry point before an infestation. Trend data turns "I check lights" into "I detect early" — the specialist mindset.'},
+ {id:'m2e', m:2, d:2, q:'"Conducive conditions" on an inspection means:', c:['Good weather','Situations that help pests thrive (moisture, clutter, gaps, food debris)','Approved chemicals','Trained staff'], a:1, w:'Conducive conditions are the WHY behind pests: leaks, grease, standing water, clutter, unsealed gaps. Documenting and correcting them prevents recurrence.'},
+ {id:'m2f', m:2, d:3, q:'A "threshold" in monitoring is:', c:['A door','The pest level at which action is warranted','The max legal dose','A ship deck limit'], a:1, w:'Action threshold = the point where control is justified. Below it, you monitor; above it, you act. In food areas thresholds are near-zero, but the concept still guides proportionate response.'},
+ {id:'m2g', m:2, d:3, q:'Placing rodent monitoring stations, the correct spacing rule of thumb along a wall is:', c:['One per ship','Closer where activity is high; mice travel only short distances (~3–5 m)','Every 100 m only','Only at doors'], a:1, w:'Mice rarely travel far from harborage (a few metres), so stations must be closer-spaced than for rats. Place along walls/runways where they travel, tighter where evidence is fresh.'},
+ {id:'m2h', m:2, d:3, q:'Best evidence that a rodent runway is ACTIVE (not old):', c:['Dusty droppings','Fresh, moist, dark droppings and smudge/rub marks','Cobwebs','A sealed hole'], a:1, w:'Fresh droppings are dark, soft, shiny; old ones are grey, dry, crumbly. Rub marks (body grease) on runways confirm active traffic — target control there.'},
+ {id:'m2i', m:2, d:1, q:'The single most valuable inspection tool is:', c:['A strong pesticide','A flashlight (and your eyes)','A radio','A ladder'], a:1, w:'A flashlight reveals cracks, droppings, harborage and conducive conditions. Inspection — not spraying — is where control is won. Look where pests live, not where people stand.'},
+
+ // ---- Module 3: Pesticides, Labels & Chemistry ----
+ {id:'m3a', m:3, d:1, q:'On a pesticide label, "the label is the law" means:', c:['You may ignore it if experienced','You must follow all label directions — using it off-label is illegal','It is only a suggestion','It only matters for storage'], a:1, w:'The label is a legal document. Rate, site, PPE, re-entry, target pests — all binding. Applying against the label is an offence under pesticide law (and PCA rules in Jamaica).'},
+ {id:'m3b', m:3, d:1, q:'Which signal word marks the MOST toxic pesticide?', c:['CAUTION','WARNING','DANGER / DANGER-POISON','NOTICE'], a:2, w:'Toxicity order: CAUTION (least) → WARNING → DANGER (most). DANGER-POISON with skull-and-crossbones is highly toxic. The signal word sets required PPE and care.'},
+ {id:'m3c', m:3, d:2, q:'"Active ingredient" (a.i.) on a label is:', c:['The water','The chemical that actually kills/controls the pest','The dye','The fragrance'], a:1, w:'The a.i. does the work; the rest is carrier/solvent/surfactant. Knowing the a.i. and its % lets you rotate modes of action and avoid overdosing.'},
+ {id:'m3d', m:3, d:2, q:'A "gel bait" for cockroaches works because roaches:', c:['Are killed on contact only','Eat it and also spread it through the population (secondary kill)','Avoid all baits','Only die from spray'], a:1, w:'Bait is ingested; via feeding, feces and cannibalism the a.i. spreads to roaches you never see (secondary kill). Baits suit food areas better than aerosols — less contamination, more reach.'},
+ {id:'m3e', m:3, d:2, q:'"Mode of action" rotation matters because:', c:['It looks professional','It slows pests developing resistance','It is cheaper','The law requires one chemical forever'], a:1, w:'Reusing one mode of action selects for resistant survivors. Rotating unrelated modes preserves effectiveness — a key IPM/stewardship practice.'},
+ {id:'m3f', m:3, d:3, q:'An "IGR" (insect growth regulator) controls pests by:', c:['Instant knockdown','Disrupting development so immatures can\'t become breeding adults','Repelling only','Drying them out'], a:1, w:'IGRs mimic/block growth hormones — nymphs fail to mature or reproduce. Slow but powerful for long-term suppression; often paired with a bait or adulticide.'},
+ {id:'m3g', m:3, d:3, q:'"Re-entry interval" (REI) on a label is:', c:['Time before you can re-open the pesticide','Time that must pass before people re-enter a treated area','Shelf life','Mixing time'], a:1, w:'REI protects people from treated surfaces/residue. On a ship you must coordinate REI with crew/passenger access — a documentation and scheduling duty of a specialist.'},
+ {id:'m3h', m:3, d:3, q:'"Formulation" difference — an EC (emulsifiable concentrate) vs a WP (wettable powder) mainly affects:', c:['Nothing','How it mixes, stains, absorbs, and suits a surface','Only the colour','The signal word'], a:1, w:'EC mixes clear but can penetrate/stain porous surfaces; WP leaves visible residue but is safer on porous/absorbent surfaces and often preferred where staining or absorption matters.'},
+ {id:'m3i', m:3, d:1, q:'Before mixing any pesticide you should ALWAYS:', c:['Guess the rate','Read the label for rate, PPE and mixing order','Double the dose for speed','Skip PPE if it\'s "mild"'], a:1, w:'More is NOT better — overdosing is illegal, wasteful and can cause resistance/residue failures. Read the label every time; rates change by pest and site.'},
+
+ // ---- Module 4: Application Equipment & Technique ----
+ {id:'m4a', m:4, d:1, q:'"Calibration" of a sprayer means:', c:['Cleaning it','Adjusting/measuring so it delivers the correct amount over an area','Painting it','Charging a battery'], a:1, w:'Calibration ensures you apply the LABEL rate — not too much (illegal/unsafe) or too little (ineffective, resistance). It is the difference between a technician and a guesser.'},
+ {id:'m4b', m:4, d:1, q:'A "crack and crevice" application means placing product:', c:['Over the whole floor','Precisely into cracks/voids where pests harbor, minimal exposure','On food surfaces','In the air'], a:1, w:'Crack-and-crevice targets harborage with tiny amounts and near-zero human exposure — ideal in food areas. It reflects the precision expected of a specialist.'},
+ {id:'m4c', m:4, d:2, q:'You notice your spray tip is worn and output has increased. You should:', c:['Keep going, faster is better','Replace the nozzle — worn tips over-apply and mis-pattern','Add more water only','Ignore it'], a:1, w:'Worn nozzles increase flow and ruin the pattern → over-application, illegal rates, poor coverage. Nozzle maintenance is part of calibration discipline.'},
+ {id:'m4d', m:4, d:2, q:'The correct mixing order generally puts:', c:['Pesticide first into an empty tank','Water partly in, then product, then top up with agitation','Everything at once, no water','Product only, no water'], a:1, w:'Fill tank partway with water, add measured product, then top up while agitating — prevents clumping, uneven concentration and equipment damage. Always follow label specifics.'},
+ {id:'m4e', m:4, d:2, q:'"Agitation" in a spray tank is needed to:', c:['Make noise','Keep the mixture uniform so concentration stays even','Cool the tank','Reduce volume'], a:1, w:'Without agitation, WP/SC formulations settle → early spray is weak, later spray over-concentrated. Uniform mix = uniform, legal rate.'},
+ {id:'m4f', m:4, d:3, q:'A B&G (compressed-air) sprayer loses pressure mid-job. The MOST likely effect on application:', c:['None','Droplet size and output change → uneven, sub-label coverage','It becomes stronger','It self-corrects'], a:1, w:'Falling pressure changes flow and droplet size, causing uneven coverage and off-rate application. Maintain consistent pressure (re-pump/regulate) for calibrated results.'},
+ {id:'m4g', m:4, d:3, q:'Why avoid spraying a residual insecticide directly onto a stainless food-prep surface?', c:['It looks bad only','Contamination risk + it\'s off-label for food-contact surfaces','It cleans the steel','No reason'], a:1, w:'Food-contact surfaces are generally off-label for residuals — contamination and legal violation. Use baits, crack-and-crevice, or treat when surfaces are cleaned/covered per label.'},
+ {id:'m4h', m:4, d:3, q:'After finishing, the correct sprayer practice is:', c:['Leave mix in the tank for next time','Triple-rinse, dispose of rinsate per label, store depressurized','Dump it down a galley drain','Seal it full and hot'], a:1, w:'Never store mixed product long-term or dump rinsate improperly. Triple-rinse, use rinsate as dilution water where allowed, depressurize and store safely — stewardship + equipment life.'},
+ {id:'m4i', m:4, d:1, q:'Bait stations for rodents on a ship should be:', c:['Loose and open anywhere','Secured, tamper-resistant, numbered and mapped','Hidden and never checked','Only near passengers'], a:1, w:'Tamper-resistant, anchored, numbered stations on a service map = safety, auditability and trend tracking — exactly the fly-light discipline extended to rodents.'},
+
+ // ---- Module 5: Safety, PPE & Jamaica Law (PCA) ----
+ {id:'m5a', m:5, d:1, q:'In Jamaica, which authority regulates pesticide registration, licensing and use?', c:['The Pesticides Control Authority (PCA)','The fire brigade','The airline authority','No one'], a:0, w:'The Pesticides Control Authority (PCA), under the Pesticides Act, regulates import, registration, sale, licensing of applicators, and safe use in Jamaica. Your license path runs through them.'},
+ {id:'m5b', m:5, d:1, q:'The minimum PPE for most liquid pesticide mixing is:', c:['Nothing','Gloves and eye protection (plus label-specified items)','Only a hat','Sandals and shorts'], a:1, w:'Chemical-resistant gloves and eye protection are the baseline; the label adds respirator, coveralls, boots as required. Mixing concentrate is the highest-exposure step — glove up.'},
+ {id:'m5c', m:5, d:2, q:'An SDS (Safety Data Sheet) is used to:', c:['Advertise the product','Give hazard, first-aid, handling, spill and storage information','Replace the label','Track sales'], a:1, w:'The SDS details hazards, first aid, PPE, spill response and storage. Keep SDSs accessible; inspectors (and emergencies) require them. Know where yours are on the ship.'},
+ {id:'m5d', m:5, d:2, q:'Pesticides must be stored:', c:['With food and dry goods','In a secured, ventilated, labeled area away from food, separate from PPE/feed','In the galley','In your cabin'], a:1, w:'Secure (locked), ventilated, cool, away from food/feed and ignition, with spill containment. Improper storage is both a legal violation and a poisoning/contamination risk.'},
+ {id:'m5e', m:5, d:2, q:'The correct first response to pesticide splash in the eye:', c:['Rub it','Rinse with clean water 15+ minutes and consult the label/SDS/medical','Apply another chemical','Wait and see'], a:1, w:'Flush gently 15+ minutes, remove contacts, follow label first-aid and seek medical help. Speed matters. Knowing first-aid BEFORE an incident is part of professional readiness.'},
+ {id:'m5f', m:5, d:3, q:'"Signal word DANGER + skull" means when handling you must:', c:['Relax the PPE','Use the highest care and full label PPE; small exposure can be serious','Only wear gloves if you feel like it','Speed up to finish'], a:1, w:'DANGER-POISON products demand maximum precaution — full specified PPE, careful mixing, strict rate. These often require higher licensing/authorization to use.'},
+ {id:'m5g', m:5, d:3, q:'Why must a licensed applicator keep application RECORDS?', c:['Only for billing','Legal requirement + traceability, audits, and to prove correct use','No reason','To slow work down'], a:1, w:'Records (product, rate, site, date, target, applicator) are legally required and central to audits, incident follow-up and PCA compliance. This is where your app\'s logging becomes career gold.'},
+ {id:'m5h', m:5, d:3, q:'A drum/container that held pesticide should be disposed of by:', c:['Reusing it for water','Triple-rinsing and disposing per label/PCA guidance — never for food/water','Burning in the cabin','Throwing overboard'], a:2, w:'Never reuse pesticide containers for anything, never dump at sea. Triple-rinse and dispose per label and PCA/environmental rules. Marine discharge of chemicals is a serious offence.'},
+ {id:'m5i', m:5, d:1, q:'"Re-entry interval" not yet elapsed means you should:', c:['Let crew in anyway','Keep people out and post/communicate until REI passes','Ignore it in food areas','Shorten it to save time'], a:1, w:'Enforcing REI protects people from residue and is a legal duty. Communicate and control access — coordinating this on a busy ship is a Service Specialist responsibility.'},
+
+ // ---- Module 6: Food Safety, Ship Sanitation & Service ----
+ {id:'m6a', m:6, d:1, q:'On cruise ships, the US sanitation inspection program is known as:', c:['VSP (Vessel Sanitation Program, USPH/CDC)','the Fly Program','the Ocean Act','FDA-only'], a:0, w:'The CDC\'s Vessel Sanitation Program (VSP) inspects cruise ships for sanitation incl. pest management. Integrated pest management and records are scored — your work is literally inspected.'},
+ {id:'m6b', m:6, d:1, q:'Under ship sanitation standards, evidence of live pests in food areas is:', c:['Acceptable if few','A serious violation demanding immediate correction','Only cosmetic','Ignored'], a:1, w:'Live pests in food areas are critical findings. Prevention (exclusion, monitoring, sanitation) and documented control keep scores high — the reason your monitoring routine exists.'},
+ {id:'m6c', m:6, d:2, q:'"FIFO" in dry-store management means:', c:['Fry It First Order','First In, First Out — rotate stock so old goods are used first','Fast Inspection For Officers','Fumigate In Full Order'], a:1, w:'FIFO rotation prevents stored-product pest build-up and spoilage. Old, forgotten stock is where moths/beetles breed. Sanitation + rotation is prevention, not reaction.'},
+ {id:'m6d', m:6, d:2, q:'The best pest control in a galley is usually:', c:['Heavy weekly fogging','Sanitation + exclusion + monitoring, with targeted baits (minimal spray)','Spraying all surfaces daily','Nothing'], a:1, w:'Food areas favour non-chemical control and targeted baits/crack-and-crevice — minimizes contamination and satisfies inspectors. Reserve residual spray for non-food voids per label.'},
+ {id:'m6e', m:6, d:2, q:'Good pest documentation for a client/vessel includes:', c:['Nothing written','Findings, actions, products used, conducive conditions and recommendations','Only the invoice','A verbal note'], a:1, w:'A proper service record shows what you found, did, used, and what the client must fix (leaks, gaps). It protects you, satisfies audits, and demonstrates specialist-level thoroughness.'},
+ {id:'m6f', m:6, d:3, q:'A galley manager disputes your finding of activity. The specialist response is:', c:['Argue loudly','Show the evidence (photos, counts, trend) calmly and recommend corrective conditions','Drop it to avoid conflict','Spray more to look busy'], a:1, w:'Professionalism = evidence-based, calm communication plus clear recommendations. Your photo/history/trend data makes the case objectively — soft skills separate a specialist from a sprayer.'},
+ {id:'m6g', m:6, d:3, q:'Recurring pests despite treatment usually means:', c:['The chemical is weak','Conducive conditions/harborage/entry haven\'t been fixed','You must double the dose','Pests are immortal'], a:1, w:'Chronic problems are almost always sanitation/exclusion failures, not weak chemicals. The specialist fixes the WHY (leak, gap, clutter, incoming goods) — chemicals alone never hold.'},
+ {id:'m6h', m:6, d:3, q:'What most distinguishes a Service Specialist from a Technician?', c:['A bigger sprayer','Ownership: diagnosis, documentation, client communication and prevention strategy','Working faster only','More chemical use'], a:1, w:'Specialists own the account: they diagnose root causes, communicate with clients, document to audit standard, and drive prevention — not just perform tasks. That is the promotion you\'re studying for.'},
+ {id:'m6i', m:6, d:1, q:'Why keep photos and dated records of every service (like this app does)?', c:['To fill storage','Proof of work, trend detection, audit-readiness and client trust','No reason','To slow down'], a:1, w:'Dated, photo-backed records prove service, reveal trends, pass VSP/audits, and build client trust. You already built the tool — now the knowledge behind it makes you the specialist who uses it well.'}
+];
+
+var A = {cards:{}, stats:{studied:0, correct:0, streak:0, lastDay:'', xp:0}, quiz:{}};
+var acadLoaded = false;
+function loadAcademy() {
+    if(acadLoaded) return;
+    try { var raw = localStorage.getItem('pestTechAcademy'); if(raw) { var d = JSON.parse(raw); A.cards = d.cards || {}; A.stats = Object.assign(A.stats, d.stats || {}); A.quiz = d.quiz || {}; } } catch(e) {}
+    acadLoaded = true;
+}
+function saveAcademy() { try { localStorage.setItem('pestTechAcademy', JSON.stringify(A)); } catch(e) {} if(syncEnabled && !applyingRemote) scheduleDebouncedPush && scheduleDebouncedPush(); }
+
+function addDaysISO(n) { var d = new Date(); d.setDate(d.getDate() + n); return localDayOf(d); }
+function cardState(id) { return A.cards[id] || {ease:2.5, interval:0, reps:0, lapses:0, seen:false, due:''}; }
+function isDue(id) { var c = A.cards[id]; if(!c || !c.seen) return true; return (c.due || '') <= todayISO(); }
+function dueCards(moduleId) {
+    return BANK.filter(function(card) { return (!moduleId || card.m === moduleId) && isDue(card.id); });
+}
+function moduleProgress(mid) {
+    var cards = BANK.filter(function(c) { return c.m === mid; });
+    var learned = cards.filter(function(c) { var s = A.cards[c.id]; return s && s.seen && (s.reps || 0) >= 2; }).length;
+    return {total:cards.length, learned:learned, pct: cards.length ? Math.round(learned / cards.length * 100) : 0};
+}
+
+// SM-2 lite grading
+function gradeCard(id, correct, easy) {
+    var c = cardState(id);
+    if(!correct) { c.reps = 0; c.interval = 0; c.lapses = (c.lapses || 0) + 1; c.due = todayISO(); c.ease = Math.max(1.3, c.ease - 0.2); }
+    else {
+        c.reps = (c.reps || 0) + 1;
+        if(c.reps === 1) c.interval = 1;
+        else if(c.reps === 2) c.interval = easy ? 6 : 3;
+        else c.interval = Math.round(c.interval * (easy ? (c.ease + 0.15) : c.ease));
+        c.ease = Math.max(1.3, c.ease + (easy ? 0.15 : 0));
+        c.due = addDaysISO(c.interval);
+    }
+    c.seen = true;
+    A.cards[id] = c;
+    // stats + streak
+    A.stats.studied++; if(correct) A.stats.correct++;
+    A.stats.xp = (A.stats.xp || 0) + (correct ? (easy ? 15 : 10) : 3);
+    var td = todayISO();
+    if(A.stats.lastDay !== td) {
+        var y = addDaysISO(-1);
+        A.stats.streak = (A.stats.lastDay === y) ? (A.stats.streak || 0) + 1 : 1;
+        A.stats.lastDay = td;
+    }
+    saveAcademy();
+}
+
+// ---- Academy views ----
+var acadView = 'home', acadQueue = [], acadIdx = 0, acadCurMode = '', acadQuizStats = null;
+
+function renderAcademy() {
+    loadAcademy();
+    if(acadView === 'study') return renderStudyCard();
+    if(acadView === 'roadmap') return renderRoadmap();
+    renderAcademyHome();
+}
+
+function renderAcademyHome() {
+    acadView = 'home';
+    var due = dueCards().length;
+    var acc = A.stats.studied ? Math.round(A.stats.correct / A.stats.studied * 100) : 0;
+    var h = '<div class="card"><div class="card-header"><div class="card-title">🎓 The Academy</div></div><div class="card-body">';
+    h += '<div style="color:var(--text-muted);font-size:13px;margin-bottom:12px;">Technician → Service Specialist · 6-month roadmap · Jamaica PCA track</div>';
+    h += '<div class="stats-grid" style="margin-bottom:14px;">';
+    h += '<div class="stat-card"><div class="stat-label">🔥 Streak</div><div class="stat-value">' + (A.stats.streak || 0) + '</div></div>';
+    h += '<div class="stat-card"><div class="stat-label">⭐ XP</div><div class="stat-value">' + (A.stats.xp || 0) + '</div></div>';
+    h += '<div class="stat-card"><div class="stat-label">🎯 Accuracy</div><div class="stat-value">' + acc + '%</div></div>';
+    h += '<div class="stat-card"><div class="stat-label">📌 Due now</div><div class="stat-value">' + due + '</div></div>';
+    h += '</div>';
+    h += '<button class="btn btn-primary" style="width:100%;margin-bottom:8px;" onclick="acadStartStudy(0)">▶ Daily Study' + (due ? ' — ' + due + ' due' : ' — all reviewed, learn new') + '</button>';
+    h += '<button class="btn btn-secondary" style="width:100%;" onclick="acadShowRoadmap()">🗺️ Roadmap & Modules</button>';
+    h += '</div></div>';
+
+    // module cards
+    h += '<div class="card"><div class="card-header"><div class="card-title">📚 Modules</div></div><div class="card-body">';
+    for(var i = 0; i < MODULES.length; i++) {
+        var m = MODULES[i], pr = moduleProgress(m.id);
+        h += '<div class="fl-unit" style="display:block;cursor:pointer;" onclick="acadOpenModule(' + m.id + ')">';
+        h += '<div style="display:flex;justify-content:space-between;align-items:center;"><div class="fl-unit-loc">' + m.icon + ' <b>' + m.month + '</b> — ' + escapeHtml(m.name) + '</div><div style="font-size:12px;color:var(--text-muted);">' + pr.learned + '/' + pr.total + '</div></div>';
+        h += '<div class="fl-progress" style="margin-top:6px;"><div class="fl-progress-bar" style="width:' + pr.pct + '%"></div></div>';
+        h += '</div>';
+    }
+    h += '</div></div>';
+    document.getElementById('academyRoot').innerHTML = h;
+}
+
+function acadShowRoadmap() { acadView = 'roadmap'; renderRoadmap(); }
+function renderRoadmap() {
+    var h = '<div class="card"><div class="card-header"><div class="card-title">🗺️ Technician → Service Specialist</div><button class="btn btn-sm btn-secondary" onclick="acadHome()">← Back</button></div><div class="card-body">';
+    h += '<div style="color:var(--text-muted);font-size:13px;margin-bottom:14px;">Six months, one module each. Finish a module by learning all its cards (green bar), then the spaced-repetition queue keeps it in memory. Target: Jamaica PCA applicator competence + Service Specialist skills.</div>';
+    for(var i = 0; i < MODULES.length; i++) {
+        var m = MODULES[i], pr = moduleProgress(m.id);
+        var done = pr.pct === 100;
+        h += '<div class="task-item ' + (done ? 'completed' : '') + '" style="margin-bottom:10px;padding:12px;">';
+        h += '<div style="display:flex;justify-content:space-between;align-items:center;"><div><b>' + m.icon + ' ' + m.month + '</b> · ' + escapeHtml(m.name) + '</div>' + (done ? '<span class="badge badge-special">✓ done</span>' : '<span style="font-size:12px;color:var(--text-muted);">' + pr.pct + '%</span>') + '</div>';
+        h += '<div style="font-size:12.5px;color:var(--text-muted);margin:6px 0;">' + escapeHtml(m.goal) + '</div>';
+        h += '<div class="fl-progress"><div class="fl-progress-bar" style="width:' + pr.pct + '%"></div></div>';
+        h += '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">';
+        h += '<button class="btn btn-sm btn-primary" onclick="acadStartStudy(' + m.id + ')">Study</button>';
+        h += '<button class="btn btn-sm btn-secondary" onclick="acadQuiz(' + m.id + ',1)">Easy</button>';
+        h += '<button class="btn btn-sm btn-secondary" onclick="acadQuiz(' + m.id + ',2)">Medium</button>';
+        h += '<button class="btn btn-sm btn-secondary" onclick="acadQuiz(' + m.id + ',3)">Hard</button>';
+        h += '</div></div>';
+    }
+    h += '</div></div>';
+    document.getElementById('academyRoot').innerHTML = h;
+}
+function acadOpenModule(mid) { acadShowRoadmap(); }
+function acadHome() { acadView = 'home'; renderAcademyHome(); }
+
+// Build a study queue. moduleId 0 = daily mixed (due first, then new).
+function acadStartStudy(moduleId) {
+    var pool = BANK.filter(function(c) { return !moduleId || c.m === moduleId; });
+    var due = pool.filter(function(c) { return isDue(c.id); });
+    if(!due.length) due = pool; // nothing due → free review
+    // shuffle
+    for(var i = due.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = due[i]; due[i] = due[j]; due[j] = t; }
+    acadQueue = due; acadIdx = 0; acadCurMode = 'study'; acadQuizStats = null; acadView = 'study';
+    renderStudyCard();
+}
+// Quiz = fixed difficulty within a module, scored.
+function acadQuiz(mid, diff) {
+    var pool = BANK.filter(function(c) { return c.m === mid && c.d === diff; });
+    if(!pool.length) { showToast('No questions at that level yet'); return; }
+    for(var i = pool.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
+    acadQueue = pool; acadIdx = 0; acadCurMode = 'quiz'; acadQuizStats = {right:0, total:pool.length, mid:mid, diff:diff}; acadView = 'study';
+    renderStudyCard();
+}
+
+var acadAnswered = false;
+function renderStudyCard() {
+    if(acadIdx >= acadQueue.length) return acadFinish();
+    acadAnswered = false;
+    var card = acadQueue[acadIdx];
+    var m = MODULES[card.m - 1];
+    var diffLbl = ['', 'Easy', 'Medium', 'Hard'][card.d];
+    var prog = (acadIdx + 1) + ' / ' + acadQueue.length;
+    var h = '<div class="card"><div class="card-header"><div class="card-title">' + (acadCurMode === 'quiz' ? '📝 Quiz' : '▶ Study') + '</div><button class="btn btn-sm btn-secondary" onclick="acadHome()">✕ Exit</button></div><div class="card-body">';
+    h += '<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:6px;"><span>' + m.icon + ' ' + escapeHtml(m.name) + '</span><span>' + diffLbl + ' · ' + prog + '</span></div>';
+    h += '<div class="fl-progress" style="margin-bottom:14px;"><div class="fl-progress-bar" style="width:' + Math.round(acadIdx / acadQueue.length * 100) + '%"></div></div>';
+    h += '<div style="font-size:16px;font-weight:600;line-height:1.4;margin-bottom:14px;">' + escapeHtml(card.q) + '</div>';
+    h += '<div id="acadChoices">';
+    for(var i = 0; i < card.c.length; i++) {
+        h += '<button class="btn btn-secondary acad-choice" style="width:100%;text-align:left;margin-bottom:8px;white-space:normal;" onclick="acadAnswer(' + i + ')" id="acadChoice' + i + '">' + escapeHtml(card.c[i]) + '</button>';
+    }
+    h += '</div><div id="acadFeedback"></div>';
+    h += '</div></div>';
+    document.getElementById('academyRoot').innerHTML = h;
+}
+
+function acadAnswer(idx) {
+    if(acadAnswered) return;
+    acadAnswered = true;
+    var card = acadQueue[acadIdx];
+    var correct = idx === card.a;
+    for(var i = 0; i < card.c.length; i++) {
+        var b = document.getElementById('acadChoice' + i);
+        b.onclick = null;
+        if(i === card.a) b.style.background = 'var(--success, #2d6a4f)', b.style.color = '#fff';
+        else if(i === idx) b.style.background = 'var(--danger, #b91c1c)', b.style.color = '#fff';
+        b.style.opacity = (i === card.a || i === idx) ? '1' : '0.55';
+    }
+    if(acadCurMode === 'study') gradeCard(card.id, correct, false);
+    else { if(correct) acadQuizStats.right++; }
+    var fb = document.getElementById('acadFeedback');
+    var head = correct ? '<b style="color:var(--success,#2d6a4f);">✓ Correct</b>' : '<b style="color:var(--danger,#b91c1c);">✗ Not quite</b>';
+    var h = '<div style="background:rgba(127,127,127,.10);border-radius:10px;padding:12px;margin-top:6px;">' + head + '<div style="font-size:13.5px;line-height:1.5;margin-top:6px;">' + escapeHtml(card.w) + '</div></div>';
+    h += '<div style="display:flex;gap:8px;margin-top:12px;">';
+    if(acadCurMode === 'study' && correct) {
+        h += '<button class="btn btn-secondary" style="flex:1;" onclick="acadNext()">Good ✓</button>';
+        h += '<button class="btn btn-primary" style="flex:1;" onclick="acadEasy()">Easy ✓✓</button>';
+    } else {
+        h += '<button class="btn btn-primary" style="flex:1;" onclick="acadNext()">Next →</button>';
+    }
+    h += '</div>';
+    fb.innerHTML = h;
+}
+function acadEasy() { var card = acadQueue[acadIdx]; gradeCard(card.id, true, true); acadNext(); } // re-grade as easy (extends interval)
+function acadNext() { acadIdx++; renderStudyCard(); }
+
+function acadFinish() {
+    var h = '<div class="card"><div class="card-body" style="text-align:center;padding:30px 16px;">';
+    if(acadCurMode === 'quiz' && acadQuizStats) {
+        var pct = Math.round(acadQuizStats.right / acadQuizStats.total * 100);
+        var pass = pct >= 80;
+        var m = MODULES[acadQuizStats.mid - 1];
+        var key = 'm' + acadQuizStats.mid + 'd' + acadQuizStats.diff;
+        var prev = (A.quiz[key] || 0);
+        if(pct > prev) { A.quiz[key] = pct; saveAcademy(); }
+        h += '<div style="font-size:44px;">' + (pass ? '🏆' : '📚') + '</div>';
+        h += '<div style="font-size:22px;font-weight:800;margin:8px 0;">' + pct + '%</div>';
+        h += '<div style="color:var(--text-muted);margin-bottom:6px;">' + acadQuizStats.right + ' / ' + acadQuizStats.total + ' correct · ' + m.name + ' (' + ['', 'Easy', 'Medium', 'Hard'][acadQuizStats.diff] + ')</div>';
+        h += '<div style="font-weight:700;color:' + (pass ? 'var(--success,#2d6a4f)' : 'var(--warning,#b45309)') + ';margin-bottom:16px;">' + (pass ? 'PASS — level cleared' : 'Keep going — aim for 80%') + (prev && pct > prev ? ' · new best!' : '') + '</div>';
+    } else {
+        h += '<div style="font-size:44px;">🎓</div><div style="font-size:20px;font-weight:800;margin:8px 0;">Session complete</div>';
+        h += '<div style="color:var(--text-muted);margin-bottom:16px;">Reviewed ' + acadQueue.length + ' card(s). 🔥 Streak ' + (A.stats.streak || 0) + ' · ⭐ ' + (A.stats.xp || 0) + ' XP</div>';
+    }
+    h += '<button class="btn btn-primary" style="width:100%;" onclick="acadHome()">Done</button>';
+    h += '</div></div>';
+    document.getElementById('academyRoot').innerHTML = h;
+    acadView = 'home';
 }
 </script>
 </body>
